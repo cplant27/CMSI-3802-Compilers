@@ -1,4 +1,5 @@
 # Totally Original Applicable Language ( T. O. A. L. )
+![Logo](https://user-images.githubusercontent.com/70697018/214980482-a6f7f31c-f138-4bcc-a42e-be888ee06a19.png)
 by: CJ Plantemoli, Sam Richard, Chris Jansky, Jayden Craig
 
 ##Description
@@ -9,8 +10,6 @@ Introducing a revolutionary new coding language that is designed to make program
 - simple syntax
 - built-in data structures
 - generalized to fulfil all needs
-    
-![Logo](https://user-images.githubusercontent.com/70697018/214980482-a6f7f31c-f138-4bcc-a42e-be888ee06a19.png)
 
 ## Types
 
