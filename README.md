@@ -15,10 +15,10 @@ Features:
 
 | Types   | T.O.A.L.  |
 | ------- | ------------- |
-| string  | stringBet     |
-| integer | chip          |
-| float   | change        |
-| bool    | playingOnTilt |
+| string  | word          |
+| integer | number          |
+| float   | decimal        |
+| bool    | truefalse |
 
 
 ## Built In Functions
@@ -26,49 +26,45 @@ Features:
 ### Printing
 | JavaScript                      | T.O.A.L.              |
 | ------------------------------- | ------------------------ |
-| console.log(“Place your bets”); | reveal “Place your bets” |
+| console.log(“Hello World!”); | print “Hello World!” |
 
 ## Variable Declaration and Assignment
 
 | JavaScript                               | T.O.A.L.                                                 |
 | ---------------------------------------- | ----------------------------------------------------------- |
-| let x = 5;                               | chip x: 5                                                   |
-| let y = “hello!”;                        | stringBet y: “hello!”                                       |
-| let z = 100.52;                          | change z: 100.52                                            |
-| let t = true;                            | playingOnTilt t: hit                                        |
-| let f = false;                           | playingOnTilt f: miss                                       |
-| const name = “I should be winning more”; | constantPressure stringBet name: "I should be winning more" |
+| let x = 5;                               | make x with 55;                                                 |
+| let y = “hello!”;                        | make y with “Hello World!”;                                       |
+| let z = 100.52;                          | make z with 1.7;                                            |
+| let t = true;                            | make t with true;                                        |
+| let f = false;                           | make f with false;                                       |
+| const name = “I should be winning more”; | constantly make name with "Constant"; |
 
 ## Arithmetic
 
-- Sum: `9 + 10`
-- Difference: `9 - 10`
-- Multiplication: `9 \* 10`
-- Integer Division: `9 / 10`
-- Float Division: `9 // 10`
-- Exponents (e.g. 9^10): `bigspender(9, 10)`
-- Modulus: `9 % 10`
+- Sum: `9 plus 10`
+- Difference: `9 minus 10`
+- Multiplication: `9 times 10`
+- Division: `9 divided by 10`
+- Exponents: `9 to the 10`
+- Modulus: `9 mod 10`
 
 ## Keywords
 
 | T.O.A.L.      | Traditional |
 | ---------------- | ----------- |
-| fold             | break       |
-| miss             | false       |
-| hit              | true        |
-| straddle         | function    |
-| excuses          | if          |
-| followingExcuses | else if     |
-| noMoreExcuses    | else        |
-| sleight          | switch      |
-| ifdealt          | case        |
-| blind            | default     |
-| broke            | void        |
-| playingLoose     | for         |
-| dealer           | async       |
-| reveal           | print       |
-| cashout          | return      |
-| deal             | var         |
+| done             | break       |
+| false             | false       |
+| true              | true        |
+| autmation         | function    |
+| if          | if          |
+| or else | else if     |
+| if not    | else        |
+| empty            | void        |
+| loop over     | for         |
+| loop while     | while         |
+| print           | print       |
+| output          | return      |
+| var             | var         |
 
 ## Control Flow
 
