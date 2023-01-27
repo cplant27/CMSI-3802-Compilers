@@ -1,6 +1,6 @@
 # Totally Original Applicable Language ( T. O. A. L. )
 ![Logo](https://user-images.githubusercontent.com/70697018/214980482-a6f7f31c-f138-4bcc-a42e-be888ee06a19.png)
-by: CJ Plantemoli, Sam Richard, Chris Jansky, Jayden Craig
+###by: CJ Plantemoli, Sam Richard, Chris Jansky, Jayden Craig
 
 ##Description
 Introducing a revolutionary new coding language that is designed to make programming more accessible to everyone. This language is written like plain English, so it is easy to understand and use, even for those with no prior coding experience. With its simple syntax and intuitive structure, this language makes it easy for anyone to create powerful and complex programs with ease. Whether you are a seasoned programmer or just starting out, this language is the perfect tool for creating efficient and effective code. So why wait? Start coding today with this new and user-friendly language!
@@ -71,7 +71,7 @@ Introducing a revolutionary new coding language that is designed to make program
 ### If Statements
 
 <table>
-<tr> <th>JavaScript</th><th>PokerScript</th><tr>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
 </tr>
 
 <td>
@@ -89,12 +89,12 @@ if (x == 0) {
 <td>
 
 ```
-excuses x == 0 $.
-  cashout hit
-  
-.$ noMoreExcuses $.
-  cashout miss
-.$
+make var x with 5;
+if x is larger than 4, print "bigger than 4";
+if not, print "smaller than 4";
+ 
+OUT:
+bigger than 4
 ```
 
 </td>
