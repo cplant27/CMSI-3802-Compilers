@@ -99,7 +99,7 @@ if not, output false;
 ### For-Loops
 
 <table>
-<tr> <th>JavaScript</th><th>PokerScript</th><tr>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
 </tr>
 
 <td>
@@ -128,7 +128,7 @@ loop over element in list, add 1 to element, print element;
 
 ```
 
-#
+# comment
 
 #/
 this is a multiline comment
@@ -143,7 +143,7 @@ this is a multiline comment
 Simple function to add two numbers
 
 <table>
-<tr> <th>JavaScript</th><th>PokerScript</th><tr>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
 </tr>
 
 <td>
