@@ -32,12 +32,12 @@ Introducing a revolutionary new coding language that is designed to make program
 
 | JavaScript                               | T.O.A.L.                                                 |
 | ---------------------------------------- | ----------------------------------------------------------- |
-| let x = 5;                               | make x with 55;                                                 |
-| let y = “hello!”;                        | make y with “Hello World!”;                                       |
-| let z = 100.52;                          | make z with 1.7;                                            |
+| let x = 55;                               | make x with 55;                                                 |
+| let y = “Hello World!”;                        | make y with “Hello World!”;                                       |
+| let z = 1.7;                          | make z with 1.7;                                            |
 | let t = true;                            | make t with true;                                        |
 | let f = false;                           | make f with false;                                       |
-| const name = “I should be winning more”; | constantly make name with "Constant"; |
+| const name = “Constant”; | constantly make name with "Constant"; |
 
 ## Arithmetic
 
@@ -77,7 +77,7 @@ Introducing a revolutionary new coding language that is designed to make program
 <td>
 
 ```javascript
-if (x == 0) {
+if (x > 4) {
   return true;
   
 } else {
@@ -89,43 +89,8 @@ if (x == 0) {
 <td>
 
 ```
-make var x with 5;
-if x is larger than 4, print "bigger than 4";
-if not, print "smaller than 4";
- 
-OUT:
-bigger than 4
-```
-
-</td>
-</table>
-
-### While, Do-While loops
-
-<table>
-<tr> <th>JavaScript</th><th>PokerScript</th><tr>
-</tr>
-
-<td>
-
-```javascript
-let patience = 3;
-while (patience != 0) {
-  console.log("What is taking so long!?");
-  patience--;
-}
-```
-
-</td>
-
-<td>
-
-```
-chip patience: 3
-contemplating patience != 0  $.
-  reveal "What is taking so long!?"
-  patience -$
-.$
+if x is larger than 4, output true;
+if not, output false;
 ```
 
 </td>
@@ -133,8 +98,6 @@ contemplating patience != 0  $.
 
 ### For-Loops
 
-- For loops in PokerScript must have two or three statements within them.
-
 <table>
 <tr> <th>JavaScript</th><th>PokerScript</th><tr>
 </tr>
@@ -142,12 +105,11 @@ contemplating patience != 0  $.
 <td>
 
 ```javascript
-let winnings = 0
-for (int x = 0; x < 10; x++) {
-  for (int y = 0; y < 20; y++) {
-    winnings += 5;
+let list = [1, 2, 3, 4, 5];
+for element in list {
+    element++;
+    console.log(element);
   }
-}
 ```
 
 </td>
@@ -155,12 +117,8 @@ for (int x = 0; x < 10; x++) {
 <td>
 
 ```
-chip winnings: 0
-playingLoose (chip x: 0, x < 10, x+$) $.
-  playingLoose (chip y: 0, y < 20, y+$) $.
-    winnings +$ 5
-  .$
-.$
+make list with 1, 2, 3, 4, 5;
+loop over element in list, add 1 to element, print element;
 ```
 
 </td>
@@ -168,22 +126,19 @@ playingLoose (chip x: 0, x < 10, x+$) $.
 
 ## Comments
 
-In Poker, it's rude to comment on the way people play. Hence,
-Single line comments are marked with `rude` and multiline comments are marked with `rude/` at the beginning and `/rude` at the end.
-
 ```
 
-rude this is a single line comment
+#
 
-rude/
+#/
 this is a multiline comment
-/rude
+/#
 
 ```
 
 ## More Example Programs
 
-### **JavaScript** on the left; **PokerScript** on the right.
+### **JavaScript** on the left; **T.O.A.L** on the right.
 
 Simple function to add two numbers
 
@@ -195,7 +150,7 @@ Simple function to add two numbers
 
 ```javascript
 function add(a, b) {
-  return a + b
+  return a + b;
 }
 ```
 
@@ -204,9 +159,9 @@ function add(a, b) {
 <td>
 
 ```
-straddle add(a, b) $.
-  cashout a + b
-.$
+automation add(a, b) {
+  output a plus b;
+}
 ```
 
 </td>
@@ -215,13 +170,13 @@ straddle add(a, b) $.
 Arrays
 
 <table>
-<tr> <th>JavaScript</th><th>PokerScript</th><tr>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
 </tr>
 
 <td>
 
 ```javascript
-let arr = [2, 4, 6]
+let arr = [2, 4, 6];
 ```
 
 </td>
@@ -229,7 +184,7 @@ let arr = [2, 4, 6]
 <td>
 
 ```
-flop chip arr: [2, 4, 6]
+make arr with 2, 4, 6;
 ```
 
 </td>
