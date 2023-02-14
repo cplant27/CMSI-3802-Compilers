@@ -1,0 +1,44 @@
+Toal {
+  Program    = Statement+
+  Statement  = PrintStmt | VarDec | AssignStmt | IfStmt
+            
+            
+  PrintStmt  = print  Exp ";"
+  VarDec     = make Var "with" Exp ";"
+  AssignStmt = id "is now" Exp ";"
+  IfStmt     = if Exp true Statement+ false Statement+ fine
+  
+  id         = ~keyword idchar+
+  idchar     = letter | digit | "_" 
+  
+  keyword    = make | print | if | true | false | fine
+  
+  Var        = id
+  
+  Boolean    = "true" | "false" | "True" | "False"
+ 
+  Exp        = Exp "plus" Term        --add
+             | Exp "minus" Term         --sub
+             | Exp "times" Term          --mult
+             | Exp "divided by" Term   --div
+             | Exp "to the" Term          --exponents
+             | Exp "mod" Term            --modulo
+             | Term
+             | Boolean
+  
+  Term       = numeral | strlit | Var
+
+  make       = "make" ~idchar
+  print      = "print" ~idchar
+  if         = "if" ~idchar
+  true       = "true" ~idchar
+  false      = "false" ~idchar
+  fine       = "fine" ~idchar
+  automation = "automation" ~idchar
+  output     = "output" ~idchar
+  empty      = "empty" ~idchar
+  
+
+  numeral    = digit+ ("." digit+)?
+  strlit     = "\"" (~"\"" any)* "\""
+}
