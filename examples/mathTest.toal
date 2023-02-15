@@ -1,0 +1,9 @@
+make x with 5;
+make y with 2;
+make z with 10 times 2;
+make a with x times y;
+
+print x plus y;
+print x divided by y;
+print z;
+print a;

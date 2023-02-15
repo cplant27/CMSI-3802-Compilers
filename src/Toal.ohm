@@ -1,12 +1,11 @@
 Toal {
   Program    = Statement+
   Statement  = PrintStmt | VarDec | AssignStmt | IfStmt
-            
-            
+  
   PrintStmt  = print  Exp ";"
   VarDec     = make Var "with" Exp ";"
-  AssignStmt = id "is now" Exp ";"
-  IfStmt     = if Exp true Statement+ false Statement+ fine
+  AssignStmt = "change" id "to"  Exp ";"
+  IfStmt     = if Bool "," Statement+ (", else" Statement+)?
   
   id         = ~keyword idchar+
   idchar     = letter | digit | "_" 
@@ -14,23 +13,30 @@ Toal {
   keyword    = make | print | if | true | false | fine
   
   Var        = id
-  
-  Boolean    = "true" | "false" | "True" | "False"
+
  
-  Exp        = Exp "plus" Term        --add
-             | Exp "minus" Term         --sub
-             | Exp "times" Term          --mult
-             | Exp "divided by" Term   --div
-             | Exp "to the" Term          --exponents
+  Exp        = Exp "plus" Term           --addition
+             | Exp "minus" Term          --subtraction
+             | Exp "times" Term          --multiplication
+             | Exp "divided by" Term     --division
+             | Exp "to the" Term         --exponents
              | Exp "mod" Term            --modulo
              | Term
+             | Bool
+  
+  Bool       = Exp "is bigger than" Exp  --logic_greater
+             | Exp "is smaller than" Exp --logic_less
+             | Exp "is equal to" Exp     --logic_equals
              | Boolean
+
+  Boolean    = "true" | "false" | "True" | "False"
   
   Term       = numeral | strlit | Var
 
   make       = "make" ~idchar
   print      = "print" ~idchar
   if         = "if" ~idchar
+  else       = "else" ~idchar
   true       = "true" ~idchar
   false      = "false" ~idchar
   fine       = "fine" ~idchar

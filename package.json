@@ -1,6 +1,6 @@
 {
   "name": "toal",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "This language is written like plain English, so it is easy to understand and use.",
   "main": "index.js",
   "type": "module",
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/cplant27/T.O.A.L..git"
   },
   "author": "CJ Plantemolli, Jayden Craig, Chris Jansky, Samuel Richard",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cplant27/T.O.A.L./issues"
   },
@@ -24,5 +24,10 @@
   },
   "devDependencies": {
     "mocha": "^8.3.2"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
   }
 }
