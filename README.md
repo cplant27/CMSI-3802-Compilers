@@ -87,8 +87,12 @@ if (x > 4) {
 <td>
 
 ```
-if x is larger than 4, output true;
-if not, output false;
+if x is larger than 4 {
+  output true;
+}
+if not {
+  output false;
+}
 ```
 
 </td>
@@ -116,7 +120,10 @@ for element in list {
 
 ```
 make list with 1, 2, 3, 4, 5;
-loop over element in list, add 1 to element, print element;
+loop over element in list { 
+  change element to element plus 1;
+  print element; 
+}
 ```
 
 </td>
