@@ -7,9 +7,10 @@ Introducing a revolutionary new coding language that is designed to make program
 
 ## Features
 - reads closely to english
-- simple syntax
 - built-in data structures
-- generalized to fulfil all needs
+- loops
+- conditionals
+- functions
 
 ## Types
 
@@ -52,19 +53,16 @@ Introducing a revolutionary new coding language that is designed to make program
 
 | T.O.A.L.      | Traditional |
 | ---------------- | ----------- |
-| done             | break       |
+| break             | break       |
 | false             | false       |
 | true              | true        |
 | autmation         | function    |
 | if          | if          |
-| or else | else if     |
-| if not    | else        |
 | empty            | void        |
 | loop over     | for         |
 | loop while     | while         |
 | print           | print       |
 | output          | return      |
-| var             | var         |
 
 ## Control Flow
 
@@ -89,8 +87,12 @@ if (x > 4) {
 <td>
 
 ```
-if x is larger than 4, output true;
-if not, output false;
+if x is larger than 4 {
+  output true;
+}
+if not {
+  output false;
+}
 ```
 
 </td>
@@ -118,7 +120,10 @@ for element in list {
 
 ```
 make list with 1, 2, 3, 4, 5;
-loop over element in list, add 1 to element, print element;
+loop over element in list { 
+  add 1 to element;
+  print element; 
+}
 ```
 
 </td>
@@ -128,11 +133,7 @@ loop over element in list, add 1 to element, print element;
 
 ```
 
-# comment
-
-#/
-this is a multiline comment
-/#
+# this is a comment
 
 ```
 
