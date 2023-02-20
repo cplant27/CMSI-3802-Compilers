@@ -8,8 +8,8 @@ Introducing a revolutionary new coding language that is designed to make program
 ## Features
 - reads closely to english
 - built-in data structures
-- while loops
-- conditional statements
+- loops
+- conditionals
 - functions
 
 ## Types
@@ -53,19 +53,16 @@ Introducing a revolutionary new coding language that is designed to make program
 
 | T.O.A.L.      | Traditional |
 | ---------------- | ----------- |
-| done             | break       |
+| break             | break       |
 | false             | false       |
 | true              | true        |
 | autmation         | function    |
 | if          | if          |
-| or else | else if     |
-| if not    | else        |
 | empty            | void        |
 | loop over     | for         |
 | loop while     | while         |
 | print           | print       |
 | output          | return      |
-| var             | var         |
 
 ## Control Flow
 
