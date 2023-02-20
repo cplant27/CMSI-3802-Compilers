@@ -1,0 +1,6 @@
+make x with 5;
+
+if x is 5 { 
+print "X IS 5";
+}
+

@@ -20,14 +20,18 @@
   "dependencies": {
     "c8": "^7.6.0",
     "node": "^15.12.0",
-    "ohm-js": "^15.4.1"
+    "ohm-js": "^15.5.0"
   },
   "devDependencies": {
-    "mocha": "^8.3.2"
+    "mocha": "^8.4.0"
   },
   "directories": {
     "doc": "docs",
     "example": "examples",
     "test": "test"
-  }
+  },
+  "keywords": [
+    "compiler",
+    "toal"
+  ]
 }

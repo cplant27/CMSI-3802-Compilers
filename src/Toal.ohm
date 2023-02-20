@@ -1,50 +1,81 @@
 Toal {
   Program    = Statement+
-  Statement  = PrintStmt | VarDec | AssignStmt | IfStmt
+  Statement  = PrintStmt | VarDec | ConstDec | VarAss | ChngVar | IfStmt | Automation | Output | Call | WhileLoop | Break
   
-  PrintStmt  = print  Exp ";"
-  VarDec     = make Var "with" Exp ";"
-  AssignStmt = "change" id "to"  Exp ";"
-  IfStmt     = if Bool "," Statement+ (", else" Statement+)?
-  
-  id         = ~keyword idchar+
-  idchar     = letter | digit | "_" 
-  
-  keyword    = make | print | if | true | false | fine
-  
+  VarDec     = make id "with" (Call|Exp|BoolExp|Word) ";"
+  ConstDec   = constantly VarDec
+  VarAss     = change Var "to"  (Call|Exp|BoolExp|Word) ";"
+  PrintStmt  = print (Call|Exp|BoolExp|Word) ";"
+  IfStmt     = if BoolExp Block (ElseStmt)?
+  ElseStmt   = if "not" Block
+  Automation = automate id "(" Params ")" Block
+  Output     = output (Exp|BoolExp|Word) ";"
+  WhileLoop  = loop "while" BoolExp Block
+  Block      = "{" Statement* "}"
+  Break      = break ";"
+
   Var        = id
 
- 
-  Exp        = Exp "plus" Term           --addition
-             | Exp "minus" Term          --subtraction
-             | Exp "times" Term          --multiplication
-             | Exp "divided by" Term     --division
-             | Exp "to the" Term         --exponents
-             | Exp "mod" Term            --modulo
+  Call       = id "(" Args ")"
+  Params     = ListOf<id, ",">
+  Args       = ListOf<(Exp|BoolExp|Word), ",">
+
+  Term       = numeral | Var
+  Word       = strlit
+  Boolean    = true | false
+
+  Exp        = Exp "to the" Exp                       -- exponents
+             | Exp "times" Exp                        -- multiplication
+             | Exp "divided by" Exp                   -- division
+             | Exp "mod" Exp                          -- modulo
+             | Exp "plus" Exp                         -- addition
+             | Exp "minus" Exp                        -- subtraction
+             | "(" Exp ")"                            -- parentheses
              | Term
-             | Bool
-  
-  Bool       = Exp "is bigger than" Exp  --logic_greater
-             | Exp "is smaller than" Exp --logic_less
-             | Exp "is equal to" Exp     --logic_equals
+
+  BoolExp    = Exp "is greater than" Exp              -- logic_greater
+             | Exp "is less than" Exp                 -- logic_less
+             | Exp "is" Exp                           -- logic_equals
+             | Exp "is not" Exp                       -- logic_not_equals
+             | Exp "is greater than or equal to" Exp  -- logic_greater_or_eq
+             | Exp "is less than or equal to" Exp     -- logic_less_or_eq
              | Boolean
 
-  Boolean    = "true" | "false" | "True" | "False"
-  
-  Term       = numeral | strlit | Var
+  ChngVar    = add Term "to" Term ";"
+             | subtract Term "from" Term ";"
+             | multiply Term "by" Term ";"
+             | divide Term "by" Term ";"
+             | raise Term "to the" Term ";"
+             | mod Term "by" Term ";"
+
+  keyword    = make | change | print | if | true | false | empty | automate | output | while | constantly | break | add | subtract | multiply | divide | mod | raise
 
   make       = "make" ~idchar
+  change     = "change" ~idchar
+  constantly = "constantly" ~idchar
   print      = "print" ~idchar
   if         = "if" ~idchar
-  else       = "else" ~idchar
   true       = "true" ~idchar
   false      = "false" ~idchar
-  fine       = "fine" ~idchar
-  automation = "automation" ~idchar
-  output     = "output" ~idchar
   empty      = "empty" ~idchar
-  
+  automate   = "automate" ~idchar
+  output     = "output" ~idchar
+  loop       = "loop" ~idchar
+  while      = "while" ~idchar
+  for        = "for" ~idchar
+  break      = "break" ~idchar
 
-  numeral    = digit+ ("." digit+)?
+  add        = "add" ~idchar
+  subtract   = "subtract" ~idchar
+  multiply   = "multiply" ~idchar
+  divide     = "divide" ~idchar
+  mod        = "mod" ~idchar
+  raise      = "raise" ~idchar
+
+  id         = ~keyword idchar+
+  idchar     = letter | digit | "_" 
+  space     += "#" (~"\n" any)*                       -- comment
+  
+  numeral    = ("-")? digit+ ("." digit+)?
   strlit     = "\"" (~"\"" any)* "\""
 }

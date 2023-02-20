@@ -1,5 +1,0 @@
-make x with 1;
-make y with 2;
-
-if x is bigger than y, print "X IS BIGGER", else print "Y IS BIGGER";
-if x is equal to 1, print "X IS ONE";

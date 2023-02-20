@@ -10,10 +10,10 @@ function error(message, node) {
   throw new Error(message);
 }
 
-const ToalGrammar = ohm.grammar(fs.readFileSync("src/Toal.ohm"));
+const ToalGrammar = ohm.grammar(fs.readFileSync("src/toal.ohm"));
 
 export default function analyze(sourceCode) {
   const match = ToalGrammar.match(sourceCode);
   if (!match.succeeded()) error(match.message);
-  console.log("you're good!");
+  console.log("Grammar Check Passed!");
 }
