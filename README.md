@@ -7,9 +7,10 @@ Introducing a revolutionary new coding language that is designed to make program
 
 ## Features
 - reads closely to english
-- simple syntax
 - built-in data structures
-- generalized to fulfil all needs
+- while loops
+- conditional statements
+- functions
 
 ## Types
 
