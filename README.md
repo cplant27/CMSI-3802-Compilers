@@ -121,7 +121,7 @@ for element in list {
 ```
 make list with 1, 2, 3, 4, 5;
 loop over element in list { 
-  change element to element plus 1;
+  add 1 to element;
   print element; 
 }
 ```
@@ -133,11 +133,7 @@ loop over element in list {
 
 ```
 
-# comment
-
-#/
-this is a multiline comment
-/#
+# this is a comment
 
 ```
 
