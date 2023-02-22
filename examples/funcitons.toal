@@ -1,8 +1,0 @@
-automate addNums( num , num2 ) {             #declares the function "AddNums" with parameters "num" and "num2"
-	make sum with num plus num2;             #declares variable sum equal to num + num2
-    output sum;
-}
-
-make x with 0;
-
-change x to addNums(x, 5);

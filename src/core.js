@@ -98,7 +98,7 @@ export class WhileLoop {
 
 export class ForLoop {
   constructor(tempVar, list, body) {
-    Object.assign(this, { test, body })
+    Object.assign(this, { tempVar, list, body })
   }
 }
 
@@ -116,6 +116,9 @@ export class StringLiteral {
 
 export const standardLibrary = Object.freeze({
   e: new Variable("e", true),
+  append: new Automation("append", 2),
+  remove: new Automation("remove", 2),
+  typeOf: new Automation("typeOf", 1),
 });
 
 // Return a compact and pretty string representation of the node graph,
@@ -141,6 +144,7 @@ Program.prototype[util.inspect.custom] = function () {
       return util.inspect(e);
     }
     for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
+      // console.log(node.constructor)
       let type = node.constructor.name;
       let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`);
       yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`;

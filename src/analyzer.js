@@ -44,38 +44,44 @@ class Context {
 
 export default function analyze(sourceCode) {
 
-  let context = new Context()
+  let context = {
+    localvars: new Map(),
+    localautos: new Map(),
+  }
 
   const analyzer = toalGrammar.createSemantics().addOperation("val", {
     Program(body) {
       return new core.Program(body.val())
     },
-    id(chars) {
-      return chars.sourceString
+    Var(identifier) {
+      return identifier.val()
     },
-    Var(id) {
-      return id.val()
-    },
-    Statement_vardec(modifier, _make, id, _with, initializer, _semicolon) {
+    Statement_vardec(constant, _make, identifier, _with, initializer, _semicolon) {
       // Analyze the initializer *before* adding the variable to the context,
       // because we don't want the variable to come into scope until after
       // the declaration. That is, "let x=x;" should be an error (unless x
       // was already defined in an outer scope.)
       const initializerVal = initializer.val()
-      const readOnly = modifier.sourceString === "constantly"
-      const variable = new core.Variable(id.sourceString, readOnly)
-      context.add(id.sourceString, variable, id)
+      const id = identifier.val()
+      const readOnly = constant.sourceString === "constantly"
+      if (context.localvars.has(id) ) {
+         error(`Variabe '${id}' has already been declared.`, identifier) 
+      }
+      const variable = new core.Variable(identifier.sourceString, readOnly)
+      context.localvars.set(identifier.sourceString, variable, identifier)
       return new core.VariableDeclaration(variable, initializerVal)
     },
-    Statement_varass(_change, id, _to, expression, _semicolon) {
-      const target = id.val()
-      return new core.Assignment(target, expression.val())
+    Statement_varass(_change, identifier, _to, expression, _semicolon) {
+      const id = identifier.val()
+      const variable = context.localvars.get(id)
+      if (! variable ) { error(`Variabe '${id}' has not been declared.`, identifier) }
+      return new core.Assignment(id, expression.val())
     },
     Statement_prnt(_print, argument, _semicolon) {
       return new core.PrintStatement(argument.val())
     },
     List(_open, elements, _close) {
-      return elements.val()
+      return elements.asIteration().val()
     },
     Block(_open, body, _close) {
       return body.val()
@@ -86,24 +92,24 @@ export default function analyze(sourceCode) {
     Statement_if(_if, condition, body, alternate) {
       return new core.IfStatement(condition.val(), body.val(), alternate.val())
     },
-    Statement_autodec(_auto, id, _open, params, _close, body) {
+    Statement_autodec(_auto, identifier, _open, params, _close, body) {
       params = params.asIteration().children
-      const auto = new core.Automation(id.sourceString, params.length, true)
+      const auto = new core.Automation(identifier.sourceString, params.length, true)
       // Add the function to the context before analyzing the body, because
       // we want to allow functions to be recursive
-      context.add(id.sourceString, auto, id)
-      context = new Context(context)
+      context.localautos.set(identifier.sourceString, auto, identifier)
+      // context = new Context(context)
       const paramsVal = params.map(p => {
         let variable = new core.Variable(p.sourceString, true)
-        context.add(p.sourceString, variable, p)
+        context.localautos.set(p.sourceString, variable, p)
         return variable
       })
       const bodyVal = body.val()
-      context = context.parent
+      // context = context.parent
       return new core.AutomationDeclaration(auto, paramsVal, bodyVal)
     },
-    Statement_callstmt(id, open, args, _close) {
-      const auto = context.get(id.sourceString, core.Automation, id)
+    Statement_callstmt(identifier, open, args, _close) {
+      const auto = context.localautos.get(identifier.sourceString, core.Automation, identifier)
       const argsVal = args.asIteration().val()
       check(
         argsVal.length === auto.paramCount,
@@ -112,8 +118,8 @@ export default function analyze(sourceCode) {
       )
       return new core.CallStatement(auto, argsVal)
     },
-    CallExp(id, open, args, _close) {
-      const auto = context.get(id.sourceString, core.Automation, id)
+    CallExp(identifier, open, args, _close) {
+      const auto = context.localautos.get(identifier.sourceString, core.Automation, identifier)
       const argsVal = args.asIteration().val()
       check(
         argsVal.length === auto.paramCount,
@@ -123,7 +129,7 @@ export default function analyze(sourceCode) {
       return new core.CallExpression(auto, argsVal)
     },
     Statement_output(_output, term, _semicolon) {
-      return new core.Output(term)
+      return new core.Output(term.val())
     },
     Statement_while(_loop, _while, test, body) {
       return new core.WhileLoop(test.val(), body.val())
@@ -198,6 +204,9 @@ export default function analyze(sourceCode) {
     false(_) {
       return false
     },
+    id(chars) {
+      return chars.sourceString
+    },
     numeral(_neg, _whole, _dot, _decimal) {
       return Number(this.sourceString)
     },
@@ -212,9 +221,9 @@ export default function analyze(sourceCode) {
     }
   })
 
-  for (const [name, entity] of Object.entries(core.standardLibrary)) {
-    context.locals.set(name, entity)
-  }
+  // for (const [name, entity] of Object.entries(core.standardLibrary)) {
+  //   context.localvars.set(name, entity)
+  // }
   const match = toalGrammar.match(sourceCode);
   if (!match.succeeded()) error(match.message);
   console.log("Grammar Check Passed!");

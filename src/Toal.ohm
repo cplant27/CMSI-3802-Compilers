@@ -4,6 +4,8 @@ Toal {
              | change Var "to"  (CallExp|VarVal) ";"                   -- varass
              | ChngVar                                                 -- chngvar
              | print (CallExp|VarVal) ";"                              -- prnt
+             | append Exp "to" Var ("at" index)? ";"                   -- append
+             | remove "item" index "from" Var ";"                      -- remove
              | if BoolExp Block (ElseStmt)?                            -- if
              | automate id "(" Params ")" Block                        -- autodec
              | output (VarVal) ";"                                     -- output
@@ -55,21 +57,32 @@ Toal {
              | raise Var "to the" Exp ";"             -- raiseTo
              | mod Var "by" Exp ";"                   -- modBy
 
-  keyword    = make | change | constantly | print | if | true | false | empty | automate | output | while | constantly | break | add | subtract | multiply | divide | mod | raise
+  keyword    = make | change | constantly | print 
+             | append | remove
+             | if | true | false 
+             | empty | automate | output 
+             | loop| while | for| break 
+             | add | subtract | multiply | divide | mod | raise
 
   make       = "make" ~idchar
   change     = "change" ~idchar
   constantly = "constantly" ~idchar
   print      = "print" ~idchar
+
+  append     = "append" ~idchar
+  remove     = "remove" ~idchar
+
   if         = "if" ~idchar
   true       = "true" ~idchar
   false      = "false" ~idchar
+
   empty      = "empty" ~idchar
   automate   = "automate" ~idchar
   output     = "output" ~idchar
+
   loop       = "loop" ~idchar
   while      = "while" ~idchar
-  for        = "for" ~idchar
+  for        = "over" ~idchar
   break      = "break" ~idchar
 
   add        = "add" ~idchar
@@ -79,10 +92,10 @@ Toal {
   mod        = "mod" ~idchar
   raise      = "raise" ~idchar
 
-  id         = ~keyword idchar+
+  id         = ~keyword ~numeral idchar+
   idchar     = letter | digit | "_" 
+  index      = digit+
   space     += "#" (~"\n" any)*                       -- comment
-  
   numeral    = ("-")? digit+ ("." digit+)?
   strlit     = "\"" (~"\"" any)* "\""
 }

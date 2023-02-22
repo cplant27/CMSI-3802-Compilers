@@ -1,0 +1,8 @@
+automate addNums( num , num2 ) {
+     output num plus num2;
+}
+
+make x with 9;
+make y with 1;
+
+change x to addNums(x, 5);

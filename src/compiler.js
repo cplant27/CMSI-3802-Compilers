@@ -5,7 +5,7 @@ import generate from "./generator.js";
 export default function compile(source, outputType) {
   if (!["analyzed", "optimized", "js"].includes(outputType)) {
     throw new Error(
-      `Unknown output type: ${outputType} \noutput types: "analyzed", "optimized", "js"`
+      `Unknown output type: ${outputType} \nOutput types: "analyzed", "optimized", "js"`
     );
   }
   const analyzed = analyze(source);
