@@ -2,6 +2,7 @@ make x with 0;
 
 loop while x is less than 5 {
     add 1 to x;
+    break;
 }
 
 print x;

@@ -63,7 +63,7 @@ export default function analyze(sourceCode) {
       // was already defined in an outer scope.)
       const initializerVal = initializer.val()
       const readOnly = modifier.sourceString === "constantly"
-      const variable = new core.Variable(id.sourceString, false)
+      const variable = new core.Variable(id.sourceString, readOnly)
       context.add(id.sourceString, variable, id)
       return new core.VariableDeclaration(variable, initializerVal)
     },
@@ -131,6 +131,10 @@ export default function analyze(sourceCode) {
     Statement_for(_loop, _for, tempVar, _in, list, body) {
       return new core.ForLoop(tempVar.val(), list.val(), body.val())
     },
+    Statement_break(_break, _semicolon) {
+      const loop = context.parent
+      return new core.Break(loop)
+    },
     Exp_parentheses(_open, expression, _close) {
       return expression.val()
     },
@@ -195,10 +199,10 @@ export default function analyze(sourceCode) {
       return false
     },
     numeral(_neg, _whole, _dot, _decimal) {
-      return this.sourceString
+      return Number(this.sourceString)
     },
     strlit(_open, chars, _close) {
-      return this.sourceString
+      return new core.StringLiteral(this.sourceString)
     },
     _terminal() {
       return this.sourceString

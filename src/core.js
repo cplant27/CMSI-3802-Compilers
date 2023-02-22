@@ -7,44 +7,44 @@ export class Program {
 }
 
 export class Variable {
-  constructor(name) {
-    this.name = name;
+  constructor(name, readOnly) {
+    Object.assign(this, { name, readOnly })
   }
 }
 
 export class VariableDeclaration {
   constructor(variable, initializer) {
-    Object.assign(this, { variable, initializer });
+    Object.assign(this, { variable, initializer })
   }
 }
 
 export class Assignment {
   constructor(target, source) {
-    Object.assign(this, { target, source });
+    Object.assign(this, { target, source })
   }
 }
 
 export class PrintStatement {
   constructor(argument) {
-    this.argument = argument;
+    this.argument = argument
   }
 }
 
 export class Expression {
   constructor(op, left, right) {
-    Object.assign(this, { op, left, right });
+    Object.assign(this, { op, left, right })
   }
 }
 
 export class BooleanExpression {
   constructor(op, left, right) {
-    Object.assign(this, { op, left, right });
+    Object.assign(this, { op, left, right })
   }
 }
 
 export class UnaryExpression {
   constructor(op, operand) {
-    Object.assign(this, { op, operand });
+    Object.assign(this, { op, operand })
   }
 }
 
@@ -56,49 +56,61 @@ export class ChangeVariable {
 
 export class Automation {
   constructor(name, paramCount) {
-    Object.assign(this, { name, paramCount });
+    Object.assign(this, { name, paramCount })
   }
 }
 
 export class AutomationDeclaration {
   constructor(fun, params, body) {
-    Object.assign(this, { fun, params, body });
+    Object.assign(this, { fun, params, body })
   }
 }
 
 export class CallStatement {
   constructor(callee, args) {
-    Object.assign(this, { callee, args });
+    Object.assign(this, { callee, args })
   }
 }
 
 export class CallExpression {
   constructor(callee, args) {
-    Object.assign(this, { callee, args });
+    Object.assign(this, { callee, args })
   }
 }
 
 export class Output {
   constructor(term) {
-    this.term = term;
+    this.term = term
   }
 }
 
 export class IfStatement {
   constructor(test, consequent) {
-    Object.assign(this, { test, consequent });
+    Object.assign(this, { test, consequent })
   }
 }
 
 export class WhileLoop {
   constructor(test, body) {
-    Object.assign(this, { test, body });
+    Object.assign(this, { test, body })
   }
 }
 
 export class ForLoop {
   constructor(tempVar, list, body) {
-    Object.assign(this, { test, body });
+    Object.assign(this, { test, body })
+  }
+}
+
+export class Break {
+  constructor(loop) {
+    this.loop = loop
+  }
+}
+
+export class StringLiteral {
+  constructor(contents) {
+    this.contents = contents
   }
 }
 
