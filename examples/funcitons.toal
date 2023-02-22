@@ -5,4 +5,4 @@ automate addNums( num , num2 ) {             #declares the function "AddNums" wi
 
 make x with 0;
 
-change x to addFive(x);
+change x to addNums(x, 5);

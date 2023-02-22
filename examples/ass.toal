@@ -1,0 +1,18 @@
+make x with 1;
+
+make y with x;
+
+change x to y;
+
+add 1 to x;
+
+subtract 1 from x;
+
+multiply x by 1;
+
+divide x by 1; 
+
+raise x to the 1;
+
+mod x by 1; 
+

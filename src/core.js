@@ -30,7 +30,13 @@ export class PrintStatement {
   }
 }
 
-export class BinaryExpression {
+export class Expression {
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right });
+  }
+}
+
+export class BooleanExpression {
   constructor(op, left, right) {
     Object.assign(this, { op, left, right });
   }
@@ -39,6 +45,12 @@ export class BinaryExpression {
 export class UnaryExpression {
   constructor(op, operand) {
     Object.assign(this, { op, operand });
+  }
+}
+
+export class ChangeVariable {
+  constructor(op, term, target) {
+    Object.assign(this, { op, term, target })
   }
 }
 
@@ -54,20 +66,38 @@ export class AutomationDeclaration {
   }
 }
 
-export class Call {
+export class CallStatement {
   constructor(callee, args) {
     Object.assign(this, { callee, args });
   }
 }
 
-export class IfStmt {
+export class CallExpression {
+  constructor(callee, args) {
+    Object.assign(this, { callee, args });
+  }
+}
+
+export class Output {
+  constructor(term) {
+    this.term = term;
+  }
+}
+
+export class IfStatement {
   constructor(test, consequent) {
     Object.assign(this, { test, consequent });
   }
 }
 
-export class WhileStmt {
+export class WhileLoop {
   constructor(test, body) {
+    Object.assign(this, { test, body });
+  }
+}
+
+export class ForLoop {
+  constructor(tempVar, list, body) {
     Object.assign(this, { test, body });
   }
 }

@@ -1,0 +1,13 @@
+make x with 10;
+
+make y with x minus 5;
+
+add 10 to y;
+
+if x is greater than y {
+    print "no its not";
+}
+
+if not {
+    print "y is greater than x";
+}

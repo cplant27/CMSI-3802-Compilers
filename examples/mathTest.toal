@@ -1,5 +1,5 @@
 make x with 2;
-make y with ( 20 plus (3 times 8) ) minus (5 to the 2);
+make y with 20 plus (3 times 8) minus (5 to the 2);
 make z with 10 times 2;
 make a with x times y;
 

@@ -1,54 +1,61 @@
 Toal {
-  Program    = Statement+
-  Statement  = PrintStmt | VarDec | ConstDec | VarAss | ChngVar | IfStmt | Automation | Output | Call | WhileLoop | Break
-  
-  VarDec     = make id "with" (Call|Exp|BoolExp|Word) ";"
-  ConstDec   = constantly VarDec
-  VarAss     = change Var "to"  (Call|Exp|BoolExp|Word) ";"
-  PrintStmt  = print (Call|Exp|BoolExp|Word) ";"
-  IfStmt     = if BoolExp Block (ElseStmt)?
-  ElseStmt   = if "not" Block
-  Automation = automate id "(" Params ")" Block
-  Output     = output (Exp|BoolExp|Word) ";"
-  WhileLoop  = loop "while" BoolExp Block
-  Block      = "{" Statement* "}"
-  Break      = break ";"
+  Program    = Statement*
+  Statement  = (constantly)? make id "with" (CallExp|VarVal) ";"       -- vardec
+             | change Var "to"  (CallExp|VarVal) ";"                   -- varass
+             | ChngVar                                                 -- chngvar
+             | print (CallExp|VarVal) ";"                              -- prnt
+             | if BoolExp Block (ElseStmt)?                            -- if
+             | automate id "(" Params ")" Block                        -- autodec
+             | output (VarVal) ";"                                     -- output
+             | id "(" Args ")"                                         -- callstmt
+             | loop "while" BoolExp Block                              -- while
+             | loop "over" id "in" Var Block                           -- for
+             | break ";"                                               -- break
 
   Var        = id
+  CallExp    = id "(" Args ")"
 
-  Call       = id "(" Args ")"
+  List       = "[" ListOf<Element, ","> "]"
+  Block      = "{" Statement* "}"
+
+  ElseStmt   = if "not" Block
+
   Params     = ListOf<id, ",">
-  Args       = ListOf<(Exp|BoolExp|Word), ",">
+  Args       = ListOf<(VarVal), ",">
 
   Term       = numeral | Var
   Word       = strlit
   Boolean    = true | false
+  VarVal     = Exp | BoolExp | Word | List
+  Element    = Term | Word | Boolean | List
 
-  Exp        = Exp "to the" Exp                       -- exponents
+  Exp        = "(" Exp ")"                            -- parentheses
+             | Exp "to the" Exp                       -- exponents
              | Exp "times" Exp                        -- multiplication
              | Exp "divided by" Exp                   -- division
              | Exp "mod" Exp                          -- modulo
              | Exp "plus" Exp                         -- addition
              | Exp "minus" Exp                        -- subtraction
-             | "(" Exp ")"                            -- parentheses
              | Term
+             | CallExp
 
-  BoolExp    = Exp "is greater than" Exp              -- logic_greater
-             | Exp "is less than" Exp                 -- logic_less
-             | Exp "is" Exp                           -- logic_equals
-             | Exp "is not" Exp                       -- logic_not_equals
-             | Exp "is greater than or equal to" Exp  -- logic_greater_or_eq
-             | Exp "is less than or equal to" Exp     -- logic_less_or_eq
+  BoolExp    = Exp "is greater than" Exp              -- greater
+             | Exp "is less than" Exp                 -- less
+             | Exp "is" Exp                           -- equals
+             | Exp "is not" Exp                       -- notEqual
+             | Exp "is greater than or equal to" Exp  -- greaterEqual
+             | Exp "is less than or equal to" Exp     -- lessEqual
              | Boolean
+             | CallExp
 
-  ChngVar    = add Term "to" Term ";"
-             | subtract Term "from" Term ";"
-             | multiply Term "by" Term ";"
-             | divide Term "by" Term ";"
-             | raise Term "to the" Term ";"
-             | mod Term "by" Term ";"
+  ChngVar    = add Exp "to" Var ";"                   -- addTo
+             | subtract Exp "from" Var ";"            -- subFrom
+             | multiply Var "by" Exp ";"              -- multBy
+             | divide Var "by" Exp ";"                -- divBy
+             | raise Var "to the" Exp ";"             -- raiseTo
+             | mod Var "by" Exp ";"                   -- modBy
 
-  keyword    = make | change | print | if | true | false | empty | automate | output | while | constantly | break | add | subtract | multiply | divide | mod | raise
+  keyword    = make | change | constantly | print | if | true | false | empty | automate | output | while | constantly | break | add | subtract | multiply | divide | mod | raise
 
   make       = "make" ~idchar
   change     = "change" ~idchar
