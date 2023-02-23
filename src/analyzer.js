@@ -101,7 +101,7 @@ export default function analyze(sourceCode) {
       // context = new Context(context)
       const paramsVal = params.map(p => {
         let variable = new core.Variable(p.sourceString, true)
-        context.localautos.set(p.sourceString, variable, p)
+        context.localvars.set(p.sourceString, variable, p)
         return variable
       })
       const bodyVal = body.val()
