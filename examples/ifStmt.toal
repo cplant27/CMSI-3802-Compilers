@@ -7,4 +7,3 @@ if x is 5 {
 if not {
     print "X IS NOT 5";
 }
-

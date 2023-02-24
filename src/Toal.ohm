@@ -18,7 +18,7 @@ Toal {
   CallExp    = id "(" Args ")"
 
   List       = "[" ListOf<Element, ","> "]"
-  Block      = "{" Statement+ "}"
+  Block      = "{" Statement* "}"
 
   ElseStmt   = if "not" Block
 

@@ -4,11 +4,11 @@ import ohm from "ohm-js";
 
 const syntaxChecks = [
   ["all numeric literal forms", "print 8 times 89.123;"],
-  ["complex expressions", "print ( 20 plus (3 times 8) ) minus (5 to the 2);"],
+  ["complex expressions", "print 20 plus (3 times 8) minus (5 to the 2);"],
   ["all unary operators", "print -3; print false;"],
   ["end of program inside comment", "print 0; #yay"],
   ["comments with no text are ok", "print 0; #"],
-  (5)[("non-Latin letters in identifiers", "make コンパイラ with 100;")],
+  ["non-Latin letters in identifiers", "make コンパイラ with 100;"],
 ];
 
 const syntaxErrors = [

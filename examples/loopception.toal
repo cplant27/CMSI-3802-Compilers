@@ -1,0 +1,8 @@
+make x with 0;
+loop while x is less than 10 {
+    print x;
+    if x is 5 {
+        break;
+    }
+    add 1 to x;
+}
