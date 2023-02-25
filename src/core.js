@@ -7,8 +7,8 @@ export class Program {
 }
 
 export class Variable {
-  constructor(name, readOnly) {
-    Object.assign(this, { name, readOnly })
+  constructor(name, readOnly, type) {
+    Object.assign(this, { name, readOnly, type })
   }
 }
 
@@ -19,20 +19,26 @@ export class VariableDeclaration {
 }
 
 export class Assignment {
-  constructor(target, source) {
-    Object.assign(this, { target, source })
+  constructor(target, source, type) {
+    Object.assign(this, { target, source, type })
   }
 }
 
 export class PrintStatement {
-  constructor(argument) {
-    this.argument = argument
+  constructor(argument, type) {
+    Object.assign(this, { argument, type })
   }
 }
 
 export class Expression {
   constructor(op, left, right) {
-    Object.assign(this, { op, left, right })
+    Object.assign(this, {op, left, right })
+  }
+}
+
+export class ParenthesesExpression {
+  constructor( contents ) {
+    this.contents = contents
   }
 }
 
@@ -48,9 +54,15 @@ export class UnaryExpression {
   }
 }
 
-export class ChangeVariable {
+export class ChangeVariableType1 {
   constructor(op, term, target) {
     Object.assign(this, { op, term, target })
+  }
+}
+
+export class ChangeVariableType0 {
+  constructor(op, target, term) {
+    Object.assign(this, { op, target, term })
   }
 }
 
@@ -61,8 +73,8 @@ export class Automation {
 }
 
 export class AutomationDeclaration {
-  constructor(fun, params, body) {
-    Object.assign(this, { fun, params, body })
+  constructor(name, auto, params, body) {
+    Object.assign(this, { name, auto, params, body })
   }
 }
 
@@ -79,8 +91,8 @@ export class CallExpression {
 }
 
 export class Output {
-  constructor(term) {
-    this.term = term
+  constructor(value, type) {
+    Object.assign(this, {value, type})
   }
 }
 
@@ -103,14 +115,32 @@ export class ForLoop {
 }
 
 export class Break {
-  constructor(loop) {
-    this.loop = loop
-  }
+  // Intentionally empty
 }
 
 export class StringLiteral {
   constructor(contents) {
     this.contents = contents
+  }
+}
+
+export class Type {
+  // Type of all basic type int, float, string, etc. and superclass of others
+  static BOOLEAN = new Type("boolean")
+  static INT = new Type("int")
+  static FLOAT = new Type("float")
+  static STRING = new Type("string")
+  static LIST = new Type("list")
+  static EXP = new Type("expression")
+  static BOOLEXP = new Type("boolean expression")
+  static AUTO = new Type("autmation call")
+  static ANY = new Type("any")
+  constructor(description) {
+    Object.assign(this, { description })
+  }
+  // Equivalence: when are two types the same
+  isEquivalentTo(target) {
+    return this == target
   }
 }
 

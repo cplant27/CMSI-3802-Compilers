@@ -1,5 +1,10 @@
-make this_list with [1,"hello", [1,2,3]];
+make this_list with [1,"hello", [1,2,3], []];
+make empty with [];
 
 loop over element in this_list {
+    print element;
+}
+
+loop over element in [1,2,3] {
     print element;
 }

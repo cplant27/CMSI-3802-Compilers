@@ -1,1 +1,32 @@
-make コンパイラ with 100;
+# make コンパイラ with 100;
+
+# make x with 1 is 2;
+
+# make x with z;
+
+# constantly make y with 5.5 plus 8;
+# make x with y;
+# add 4 to y
+
+# print 5 to the "hello";         # make better error, like say expects number or variable
+
+# make x with 5;
+# make y with "Hello";
+# multiply y by x;
+
+# make x with ( 1 plus 1 ) minus 1;
+
+# automate x (y){}
+# make y with x(1);
+
+# make x with 1 plus (2 minus (3 to the 2) ) times 4;
+
+# add 5 to 5;                  # confusing error, expects not a numeral because it expects a variable id which '5' is invalid for
+
+
+#make y with [1,2,3];
+#loop over x in y{
+#    change x to 1;
+#    make z with 2;
+#}
+#make z with 2;

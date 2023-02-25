@@ -2,22 +2,23 @@ Toal {
   Program    = Statement*
   Statement  = (constantly)? make id "with" (CallExp|VarVal) ";"       -- vardec
              | change Var "to"  (CallExp|VarVal) ";"                   -- varass
-             | ChngVar                                                 -- chngvar
+             | ChngVar0                                                -- chngvar0
+             | ChngVar1                                                -- chngvar1
              | print (CallExp|VarVal) ";"                              -- prnt
              | append Exp "to" Var ("at" index)? ";"                   -- append
              | remove "item" index "from" Var ";"                      -- remove
-             | if BoolExp Block (ElseStmt)?                            -- if
+             | if (BoolExp|Var) Block (ElseStmt)?                      -- if
              | automate id "(" Params ")" Block                        -- autodec
              | output (VarVal) ";"                                     -- output
-             | id "(" Args ")"                                         -- callstmt
+             | id ~space "(" Args ")" ";"                              -- callstmt
              | loop "while" BoolExp Block                              -- while
-             | loop "over" id "in" Var Block                           -- for
+             | loop "over" id "in" (Var|List) Block                           -- for
              | break ";"                                               -- break
 
   Var        = id
-  CallExp    = id "(" Args ")"
+  CallExp    = id ~space "(" Args ")"
 
-  List       = "[" ListOf<Element, ","> "]"
+  List       = "[" ListOf<VarVal, ","> "]"
   Block      = "{" Statement* "}"
 
   ElseStmt   = if "not" Block
@@ -27,35 +28,35 @@ Toal {
 
   Term       = numeral | Var
   Word       = strlit
-  Boolean    = true | false
-  VarVal     = Exp | BoolExp | Word | List
-  Element    = Term | Word | Boolean | List
+  Boolean    = true | false | BoolExp
+  VarVal     = Exp | Boolean | Word | List
+  Element    = Exp | Word | Boolean | List
 
-  Exp        = "(" Exp ")"                            -- parentheses
-             | Exp "to the" Exp                       -- exponents
-             | Exp "times" Exp                        -- multiplication
-             | Exp "divided by" Exp                   -- division
-             | Exp "mod" Exp                          -- modulo
-             | Exp "plus" Exp                         -- addition
-             | Exp "minus" Exp                        -- subtraction
+  Exp0       = "(" Exp ")"                            -- parentheses
+
+  Exp        = Exp operator Exp                       -- expression
              | Term
+             | Exp0
              | CallExp
+  operator   = "plus" | "minus" 
+             | "times" | "divided by" 
+             | "to the" | "mod"
 
-  BoolExp    = Exp "is greater than" Exp              -- greater
-             | Exp "is less than" Exp                 -- less
-             | Exp "is" Exp                           -- equals
-             | Exp "is not" Exp                       -- notEqual
-             | Exp "is greater than or equal to" Exp  -- greaterEqual
-             | Exp "is less than or equal to" Exp     -- lessEqual
-             | Boolean
-             | CallExp
+  BoolExp    = Exp boolop Exp
+  boolop     = "is greater than" | "is less than" 
+             | "is" | "is not" 
+             | "is greater than or equal to" 
+             | "is less than or equal to"
 
-  ChngVar    = add Exp "to" Var ";"                   -- addTo
-             | subtract Exp "from" Var ";"            -- subFrom
-             | multiply Var "by" Exp ";"              -- multBy
-             | divide Var "by" Exp ";"                -- divBy
-             | raise Var "to the" Exp ";"             -- raiseTo
-             | mod Var "by" Exp ";"                   -- modBy
+  ChngVar0   = ChngOp0 Var ("by"|"to the") Exp ";"
+  ChngOp0    = "multiply"
+             | "divide"
+             | "mod"
+             | "raise"
+
+  ChngVar1   = ChngOp1 Exp ("to"|"from") Var ";"
+  ChngOp1    = "add"
+             | "subtract"
 
   keyword    = make | change | constantly | print 
              | append | remove
