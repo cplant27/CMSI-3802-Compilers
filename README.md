@@ -21,7 +21,7 @@ Whether you are a seasoned programmer or just starting out, this language is the
 | string  | word          |
 | integer | number          |
 | float   | decimal        |
-| bool    | truefalse |
+| bool    | true/false |
 
 
 ## Built In Functions
