@@ -186,6 +186,7 @@ class Context {
     return this.localvars.has(name) || this.localautos.has(name) || this.parent?.sees(name) 
   }
   add(name, entity, node) {
+    console.log(`context.add(${name})`, this)
     // No shadowing! Prevent addition if id anywhere in scope chain! This is
     // a T.O.A.L thing. Many other languages allow shadowing, and in these,
     // we would only have to check that name is not in this.locals
@@ -212,7 +213,9 @@ class Context {
     error(`ContextLookupError: Identifier '${name}' not declared.`, node)
   }
   newChildContext(props) {
-    return new Context({ ...this, ...props, parent: this, locals: new Map() })
+    const c = new Context({ ...this, ...props, parent: this, locals: new Map() })
+    console.log("newChildContext:", c)
+    return c
   }
 }
 
@@ -363,7 +366,9 @@ export default function analyze(sourceCode) {
       context = context.newChildContext({ inLoop: true })
       context.add(tempRep, new core.Variable(tempVar.sourceString, false, Type.ANY), tempVar)
       const bodyRep = body.rep()
+      console.log("context.parent:", context.parent)
       context = context.parent
+      console.log("context = context.parent:", context)
       return new core.ForLoop(tempRep, listRep, bodyRep)
     },
     Statement_break(_break, _semicolon) {

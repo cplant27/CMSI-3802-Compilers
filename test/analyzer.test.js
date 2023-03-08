@@ -85,7 +85,14 @@ const semanticErrors = [
   ["output outside an automation", 'output 1;', /CallError: Output must be called in an automation./],
 ]
 
-const sample = `make x with 5; if x is 5 { print "X IS 5"; } if not { print "X IS NOT 5";}`
+const sample = `
+ make x with 5;
+ if x is 5 {
+   print "X IS 5";
+ }
+ if not {
+   print "X IS NOT 5";
+ }`
 
 const expected = `   1 | Program statements=[#2,#5]
    2 | VariableDeclaration variable=#3 initializer=5
@@ -109,6 +116,7 @@ describe("The analyzer", () => {
     })
   }
   it(`produces the expected graph for the simple sample program`, () => {
+    console.log("\n\n\n\n\n",sample)
     assert.deepEqual(util.format(analyze(sample)), expected)
   })
 })
