@@ -3,14 +3,16 @@
 ### by: CJ Plantemoli, Sam Richard, Chris Jansky, Jayden Craig
 
 ## Description
-Introducing a revolutionary new coding language that is designed to make programming more accessible to everyone. This language is written like plain English, so it is easy to understand and use, even for those with no prior coding experience. With its simple syntax and intuitive structure, this language makes it easy for anyone to create powerful and complex programs with ease. Whether you are a seasoned programmer or just starting out, this language is the perfect tool for creating efficient and effective code. So why wait? Start coding today with this new and user-friendly language!
+Introducing the Totally Original and Applicable Language (T.O.A.L.), a revolutionary new coding language that is designed to make programming more accessible to everyone. T.O.A.L. is written like plain English, so it is easy to understand and use, even for those with no prior coding experience. The simple syntax and intuitive structure make it easy for anyone to create powerful and complex programs with ease.
+
+Whether you are a seasoned programmer or just starting out, this language is the perfect tool for creating efficient and effective code. So why wait? Start coding today with this new and user-friendly language!
 
 ## Features
-- reads closely to english
-- built-in data structures
-- loops
-- conditionals
-- functions
+ - Feel like a pro with our simple syntax and commands
+ - Contain all the data you need with our built in list structure
+ - Easily and elegantly repeat tasks or iterate over data with loops
+ - Make decisions with ease using conditional statements
+ - Automate your code and call it anytime you want with custom automations
 
 ## Types
 
