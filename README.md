@@ -173,10 +173,25 @@ automate addNums(num1, num2) {
 </td>
 </table>
 
-## Comments
+### Automations
 
+<table>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
+</tr>
+
+<td>
+
+```javascript
+// this is a comment
 ```
 
+</td>
+
+<td>
+
+```
 # this is a comment
-
 ```
+
+</td>
+</table>
