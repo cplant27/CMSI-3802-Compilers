@@ -107,7 +107,7 @@ make x with 4;
 if x is larger than 4 {
   output true;
 }
-if not {
+ifnot {
   output false;
 }
 ```
