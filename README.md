@@ -26,6 +26,36 @@ Whether you are a seasoned programmer or just starting out, this language is the
 | bool    | true/false |
 | array   | list       |
 
+## Variable Declaration and Assignment
+ 
+| JavaScript                     | T.O.A.L.                                |
+| ------------------------------ | --------------------------------------- |
+| let a = 55;                    | make a with 55;                         |
+| let b = “Hello World!”;        | make b with “Hello World!”;             |
+| let c = 1.7;                   | make c with 1.7;                        |
+| let d = true;                  | make d with true;                       |
+| let e = false;                 | make e with false;                      |
+| const var = “Constant”;        | constantly make var with "Constant";    |
+
+## Variable Incrementation
+
+| JavaScript                     | T.O.A.L.            |
+| ------------------------------ | ------------------- |
+| x++                            | add 1 to x;         |
+| x--                            | subtract 1 from x   |
+| x = x * 1                      | multiply x by 1     |
+| x = x / 2                      | divide x by 2       |
+| x = x^3                        | raise x to the 3    |
+| x = x % 2                      | mod x by 2          |
+
+## Simple Arithmetic
+
+- Sum: `9 plus 10`
+- Difference: `9 minus 10`
+- Multiplication: `9 times 10`
+- Division: `9 divided by 10`
+- Exponents: `9 to the 10`
+- Modulus: `9 mod 10`
 
 ## Built In Functions
 
@@ -35,26 +65,6 @@ Whether you are a seasoned programmer or just starting out, this language is the
 | console.log(“Hello World!”);    | print “Hello World!”     |
 | append(element, list)           | append(element,list)     |
 | remove(index, list)             | remove(index,list)       |
-
-## Variable Declaration and Assignment
-
-| JavaScript                     | T.O.A.L.                                                 |
-| ------------------------------ | ----------------------------------------------------------- |
-| let x = 55;                    | make x with 55;                                             |
-| let y = “Hello World!”;        | make y with “Hello World!”;                                 |
-| let z = 1.7;                   | make z with 1.7;                                            |
-| let t = true;                  | make t with true;                                           |
-| let f = false;                 | make f with false;                                          |
-| const name = “Constant”;       | constantly make name with "Constant";                       |
-
-## Arithmetic
-
-- Sum: `9 plus 10`
-- Difference: `9 minus 10`
-- Multiplication: `9 times 10`
-- Division: `9 divided by 10`
-- Exponents: `9 to the 10`
-- Modulus: `9 mod 10`
 
 ## Keywords
 
