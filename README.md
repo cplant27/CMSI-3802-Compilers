@@ -18,31 +18,34 @@ Whether you are a seasoned programmer or just starting out, this language is the
 
 ## Types
 
-| Types   | T.O.A.L.  |
-| ------- | ------------- |
-| string  | word          |
-| integer | number          |
-| float   | decimal        |
+| Types   | T.O.A.L.   |
+| ------- | -----------|
+| string  | word       |
+| integer | number     |
+| float   | decimal    |
 | bool    | true/false |
+| array   | list       |
 
 
 ## Built In Functions
 
 ### Printing
-| JavaScript                      | T.O.A.L.              |
+| JavaScript                      | T.O.A.L.                 |
 | ------------------------------- | ------------------------ |
-| console.log(“Hello World!”); | print “Hello World!” |
+| console.log(“Hello World!”);    | print “Hello World!”     |
+| append(element, list)           | append(element,list)     |
+| remove(index, list)             | remove(index,list)       |
 
 ## Variable Declaration and Assignment
 
-| JavaScript                               | T.O.A.L.                                                 |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| let x = 55;                               | make x with 55;                                                 |
-| let y = “Hello World!”;                        | make y with “Hello World!”;                                       |
-| let z = 1.7;                          | make z with 1.7;                                            |
-| let t = true;                            | make t with true;                                        |
-| let f = false;                           | make f with false;                                       |
-| const name = “Constant”; | constantly make name with "Constant"; |
+| JavaScript                     | T.O.A.L.                                                 |
+| ------------------------------ | ----------------------------------------------------------- |
+| let x = 55;                    | make x with 55;                                             |
+| let y = “Hello World!”;        | make y with “Hello World!”;                                 |
+| let z = 1.7;                   | make z with 1.7;                                            |
+| let t = true;                  | make t with true;                                           |
+| let f = false;                 | make f with false;                                          |
+| const name = “Constant”;       | constantly make name with "Constant";                       |
 
 ## Arithmetic
 
@@ -55,18 +58,19 @@ Whether you are a seasoned programmer or just starting out, this language is the
 
 ## Keywords
 
-| T.O.A.L.      | Traditional |
+| T.O.A.L.         | Traditional |
 | ---------------- | ----------- |
-| break             | break       |
-| false             | false       |
-| true              | true        |
-| autmation         | function    |
-| if          | if          |
+| break            | break       |
+| false            | false       |
+| true             | true        |
+| autmation        | function    |
+| if               | if          |
+| else             | ifnot       |
 | empty            | void        |
-| loop over     | for         |
-| loop while     | while         |
-| print           | print       |
-| output          | return      |
+| loop over        | for         |
+| loop while       | while       |
+| print            | print       |
+| output           | return      |
 
 ## Control Flow
 
