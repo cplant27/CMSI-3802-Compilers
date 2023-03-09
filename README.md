@@ -81,6 +81,8 @@ Whether you are a seasoned programmer or just starting out, this language is the
 | print       | print       |
 | return      | output      |
 
+## Examples
+
 ### If Statements
 
 <table>
