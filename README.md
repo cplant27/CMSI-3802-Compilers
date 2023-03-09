@@ -60,29 +60,26 @@ Whether you are a seasoned programmer or just starting out, this language is the
 ## Built In Functions
 
 ### Printing
-| JavaScript                      | T.O.A.L.                 |
-| ------------------------------- | ------------------------ |
-| console.log(“Hello World!”);    | print “Hello World!”     |
-| append(element, list)           | append(element,list)     |
-| remove(index, list)             | remove(index,list)       |
+ - print "Hello World!"
+
+### List Functions
+ - append(element, list)
+ - remove(index, list)
 
 ## Keywords
 
-| T.O.A.L.         | Traditional |
-| ---------------- | ----------- |
-| break            | break       |
-| false            | false       |
-| true             | true        |
-| autmation        | function    |
-| if               | if          |
-| else             | ifnot       |
-| empty            | void        |
-| loop over        | for         |
-| loop while       | while       |
-| print            | print       |
-| output           | return      |
-
-## Control Flow
+| Traditional | T.O.A.L.    |
+| ----------- | ----------- |
+| break       | break       |
+| false       | false       |
+| true        | true        |
+| function    | automation  |
+| if          | if          |
+| else        | ifnot       |
+| for         | loop over   |
+| while       | loop while  |
+| print       | print       |
+| return      | output      |
 
 ### If Statements
 
@@ -93,6 +90,7 @@ Whether you are a seasoned programmer or just starting out, this language is the
 <td>
 
 ```javascript
+let x = 4;
 if (x > 4) {
   return true;
   
@@ -105,6 +103,7 @@ if (x > 4) {
 <td>
 
 ```
+make x with 4;
 if x is larger than 4 {
   output true;
 }
@@ -127,9 +126,9 @@ if not {
 ```javascript
 let list = [1, 2, 3, 4, 5];
 for element in list {
-    element++;
-    console.log(element);
-  }
+  element++;
+  console.log(element);
+}
 ```
 
 </td>
@@ -147,6 +146,33 @@ loop over element in list {
 </td>
 </table>
 
+### Automations
+
+<table>
+<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
+</tr>
+
+<td>
+
+```javascript
+function addNums(num1, num2) {
+  return num1 + num2
+}
+```
+
+</td>
+
+<td>
+
+```
+automate addNums(num1, num2) {
+  output num1 plus num2;
+}
+```
+
+</td>
+</table>
+
 ## Comments
 
 ```
@@ -154,57 +180,3 @@ loop over element in list {
 # this is a comment
 
 ```
-
-## More Example Programs
-
-### **JavaScript** on the left; **T.O.A.L** on the right.
-
-Simple function to add two numbers
-
-<table>
-<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
-</tr>
-
-<td>
-
-```javascript
-function add(a, b) {
-  return a + b;
-}
-```
-
-</td>
-
-<td>
-
-```
-automation add(a, b) {
-  output a plus b;
-}
-```
-
-</td>
-</table>
-
-Arrays
-
-<table>
-<tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
-</tr>
-
-<td>
-
-```javascript
-let arr = [2, 4, 6];
-```
-
-</td>
-
-<td>
-
-```
-make arr with [2, 4, 6];
-```
-
-</td>
-</table>
