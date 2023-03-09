@@ -18,13 +18,13 @@ Whether you are a seasoned programmer or just starting out, this language is the
 
 ## Types
 
-| Types   | T.O.A.L.   |
-| ------- | -----------|
-| string  | word       |
-| integer | number     |
-| float   | decimal    |
-| bool    | true/false |
-| array   | list       |
+| JavaScript| T.O.A.L.   |
+| --------- | -----------|
+| string    | word       |
+| integer   | number     |
+| float     | decimal    |
+| bool      | true/false |
+| array     | list       |
 
 ## Variable Declaration and Assignment
  
