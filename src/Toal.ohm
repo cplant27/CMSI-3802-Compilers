@@ -12,24 +12,24 @@ Toal {
              | output (VarVal) ";"                                     -- output
              | id ~space "(" Args ")" ";"                              -- callstmt
              | loop "while" BoolExp Block                              -- while
-             | loop "over" id "in" (Var|List) Block                           -- for
+             | loop "over" id "in" (Var|List) Block                    -- for
              | break ";"                                               -- break
 
   Var        = id
-  CallExp    = id ~space "(" Args ")"
 
   List       = "[" ListOf<VarVal, ","> "]"
   Block      = "{" Statement* "}"
 
-  ElseStmt   = if "not" Block
+  ElseStmt   = ifnot Block
 
   Params     = ListOf<id, ",">
   Args       = ListOf<(VarVal), ",">
+  CallExp    = id ~space "(" Args ")"
 
   Term       = numeral | Var
   Word       = strlit
   Boolean    = true | false | BoolExp
-  VarVal     = Exp | Boolean | Word | List
+  VarVal     = Boolean | Exp | Word | List
   Element    = Exp | Word | Boolean | List
 
   Exp0       = "(" Exp ")"                            -- parentheses
@@ -43,10 +43,10 @@ Toal {
              | "to the" | "mod"
 
   BoolExp    = Exp boolop Exp
-  boolop     = "is greater than" | "is less than" 
-             | "is" | "is not" 
-             | "is greater than or equal to" 
-             | "is less than or equal to"
+  boolop     = "is greater than or equal to" 
+             | "is less than or equal to" 
+             | "is greater than" | "is less than" 
+             | "is not" | "is" 
 
   ChngVar0   = ChngOp0 Var ("by"|"to the") Exp ";"
   ChngOp0    = "multiply"
@@ -60,7 +60,7 @@ Toal {
 
   keyword    = make | change | constantly | print 
              | append | remove
-             | if | true | false 
+             | if | ifnot | true | false 
              | empty | automate | output 
              | loop| while | for| break 
              | add | subtract | multiply | divide | mod | raise
@@ -74,6 +74,7 @@ Toal {
   remove     = "remove" ~idchar
 
   if         = "if" ~idchar
+  ifnot      = "ifnot" ~idchar
   true       = "true" ~idchar
   false      = "false" ~idchar
 

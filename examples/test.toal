@@ -24,9 +24,11 @@
 # add 5 to 5;                  # confusing error, expects not a numeral because it expects a variable id which '5' is invalid for
 
 
-make y with [1,2,3];
-loop over x in y{
-    change x to 1;
-    make z with 2;
-}
-make z with 2;
+#make y with [1,2,3];
+#loop over x in y{
+#    change x to 1;
+#    make z with 2;
+#}
+#make z with 2;
+
+make 5 with 5;

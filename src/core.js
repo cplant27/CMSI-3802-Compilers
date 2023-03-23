@@ -48,21 +48,9 @@ export class BooleanExpression {
   }
 }
 
-export class UnaryExpression {
-  constructor(op, operand) {
-    Object.assign(this, { op, operand })
-  }
-}
-
-export class ChangeVariableType1 {
+export class ChangeVariable {
   constructor(op, term, target) {
     Object.assign(this, { op, term, target })
-  }
-}
-
-export class ChangeVariableType0 {
-  constructor(op, target, term) {
-    Object.assign(this, { op, target, term })
   }
 }
 
@@ -126,26 +114,23 @@ export class StringLiteral {
 
 export class Type {
   // Type of all basic type int, float, string, etc. and superclass of others
-  static BOOLEAN = new Type("boolean")
-  static INT = new Type("int")
-  static FLOAT = new Type("float")
+  static BOOLEAN = new Type("true/false")
+  static INT = new Type("integer")
+  static FLOAT = new Type("decimal")
   static STRING = new Type("string")
   static LIST = new Type("list")
   static EXP = new Type("expression")
-  static BOOLEXP = new Type("boolean expression")
+  static BOOLEXP = new Type("true/false expression")
   static AUTO = new Type("autmation call")
   static ANY = new Type("any")
   constructor(description) {
     Object.assign(this, { description })
   }
-  // Equivalence: when are two types the same
-  isEquivalentTo(target) {
-    return this == target
-  }
 }
 
 export const standardLibrary = Object.freeze({
   e: new Variable("e", true),
+  pi: new Variable("pi", true),
   append: new Automation("append", 2),
   remove: new Automation("remove", 2),
   typeOf: new Automation("typeOf", 1),

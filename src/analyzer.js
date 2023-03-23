@@ -32,22 +32,13 @@ function runAutomation(value) {
 
 function determineType(value, context) {
   const val = value.sourceString
-
-  if ( val.startsWith('"') && val.endsWith('"') ) {
-    return Type.STRING
-  }
-  else if ( val.startsWith('[') && val.endsWith(']') ) {
-    return Type.LIST
-  }
+  if ( val.startsWith('"') && val.endsWith('"') ) { return Type.STRING }
+  else if ( val.startsWith('[') && val.endsWith(']') ) { return Type.LIST }
   else if ( !isNaN(val) ) {
-    if ( val.includes('.') ) {
-      return Type.FLOAT
-    }
+    if ( val.includes('.') ) { return Type.FLOAT }
     return Type.INT
   }
-  else if ( val === 'true' || val === 'false' ) {
-    return Type.BOOLEAN
-  }
+  else if ( val === 'true' || val === 'false' ) { return Type.BOOLEAN }
   else if ( value.rep() instanceof core.Expression ) {
     evaluateExpression(value)
     return Type.EXP
@@ -64,12 +55,15 @@ function determineType(value, context) {
     runAutomation(value)
     return Type.AUTO
   }
-  else if ( context.localvars.has(value.rep()) ) {
-    return context.localvars.get(val).type
+  else if ( context.sees(value.rep()) ) { return findVarInContext(value.rep(), context).type }
+  else { error(`TypeDetermineError: Value '${val}' cannot be identified.`, value) }
+}
+
+function findVarInContext(val, context) {
+  if ( context.localvars.has(val) ) {
+    return context.localvars.get(val)
   }
-  else {
-    error(`TypeDetermineError: The type of '${val}' cannot be determined.`, value)
-  }
+  return findVarInContext(val, context.parent)
 }
 
 function checkNotReadOnly(e, node) {
@@ -97,20 +91,20 @@ function checkNumericOrString(t, node) {
 }
 
 function checkBoolean(t, node) {
-  checkType(t, [Type.BOOLEAN, Type.BOOLEXP, Type.ANY], `a boolean value, got type '${t.description}'`, node)
+  checkType(t, [Type.BOOLEAN, Type.BOOLEXP, Type.ANY], `a true/false value, got type '${t.description}'`, node)
 }
 
-function checkInteger(t, node) {
-  checkType(t, [Type.INT, Type.EXP, Type.ANY], `an integer value, got type '${t.description}'`, node)
-}
+// function checkInteger(t, node) {
+//   checkType(t, [Type.INT, Type.EXP, Type.ANY], `an integer value, got type '${t.description}'`, node)
+// }
 
-function checkHaveSameType(t1, t2, node) {
-  check(t1.type.isEquivalentTo(t2.type), "Operands do not have the same type", node)
-}
+// function checkHaveSameType(t1, t2, node) {
+//   check(t1.type.isEquivalentTo(t2.type), "Operands do not have the same type", node)
+// }
 
-function checkIsAType(t, node) {
-  check(t instanceof Type, "Type expected", node)
-}
+// function checkIsAType(t, node) {
+//   check(t instanceof Type, "Type expected", node)
+// }
 
 function checkList(t, node) {
   checkType(t, [Type.LIST, Type.ANY], `a list, got type '${t.description}'`, node)
@@ -123,41 +117,12 @@ function checkList(t, node) {
 //   )
 // }
 
-// function checkNotRecursive(struct) {
-//   check(
-//     !struct.fields.map(f => f.type).includes(struct),
-//     "Struct type must not be recursive"
-//   )
-// }
-
-// function checkFieldsAllDistinct(fields) {
-//   check(
-//     new Set(fields.map(f => f.name)).size === fields.length,
-//     "Fields must be distinct"
-//   )
-// }
-
-// function checkMemberDeclared(field, { in: structType }) {
-//   check(structType.fields.map(f => f.name).includes(field), "No such field")
-// }
-
-// function checkCallable(e) {
-//   check(
-//     e.constructor === core.StructType || e.type.constructor == core.FunctionType,
-//     "Call of non-automation or non-constructor"
-//   )
-// }
-
 // function checkReturnsNothing(f) {
 //   check(f.type.returnType === Type.VOID, "Something should be returned here")
 // }
 
 // function checkReturnsSomething(f) {
 //   check(f.type.returnType !== Type.VOID, "Cannot return a value here")
-// }
-
-// function checkReturnable({ expression: e, from: f }) {
-//   checkAssignable(e, { toType: f.type.returnType })
 // }
 
 // function checkArgumentsMatch(args, targetTypes) {
@@ -172,11 +137,6 @@ function checkList(t, node) {
 //   checkArgumentsMatch(args, calleeType.paramTypes)
 // }
 
-// function checkConstructorArguments(args, structType) {
-//   const fieldTypes = structType.fields.map(f => f.type)
-//   checkArgumentsMatch(args, fieldTypes)
-// }
-
 class Context {
   constructor({ parent = null, localvars = new Map(), localautos = new Map(), inLoop = false, automation: a = null }) {
     Object.assign(this, { parent, localvars, localautos, inLoop, automation: a })
@@ -186,7 +146,6 @@ class Context {
     return this.localvars.has(name) || this.localautos.has(name) || this.parent?.sees(name) 
   }
   add(name, entity, node) {
-    console.log(`context.add(${name})`, this)
     // No shadowing! Prevent addition if id anywhere in scope chain! This is
     // a T.O.A.L thing. Many other languages allow shadowing, and in these,
     // we would only have to check that name is not in this.locals
@@ -197,9 +156,6 @@ class Context {
     else if ( entity instanceof core.Automation ) {
       if (this.sees(name)) error(`ContextAddError: Identifier '${name}' has already been declared.`, node)
       this.localautos.set(name, entity)
-    }
-    else{
-      error(`ContextAddError: Cannot find value of '${name}'.`, node)
     }
   }
   lookup(name, node) {
@@ -213,8 +169,7 @@ class Context {
     error(`ContextLookupError: Identifier '${name}' not declared.`, node)
   }
   newChildContext(props) {
-    const c = new Context({ ...this, ...props, parent: this, locals: new Map() })
-    console.log("newChildContext:", c)
+    const c = new Context({ ...this, ...props, parent: this, localvars: new Map(), localautos: new Map()})
     return c
   }
 }
@@ -260,11 +215,9 @@ export default function analyze(sourceCode) {
       checkNumeric(termType, term)
       switch (op.sourceString) {
         case "add":
-          return new core.ChangeVariableType1('+', termRep, targetRep)
+          return new core.ChangeVariable('+', termRep, targetRep)
         case "subtract":
-          return new core.ChangeVariableType1('-', termRep, targetRep)
-        default:
-          error(`AssignError: Unrecognized operator '${op.sourceString}'.`, op)
+          return new core.ChangeVariable('-', termRep, targetRep)
       }
     },
     ChngVar0(op, target, _by, term, _semicolon) {
@@ -279,18 +232,17 @@ export default function analyze(sourceCode) {
       checkNumeric(termType, term)
       switch (op.sourceString) {
         case "multiply":
-          return new core.ChangeVariableType1('*', termRep, targetRep)
+          return new core.ChangeVariable('*', termRep, targetRep)
         case "divide":
-          return new core.ChangeVariableType1('/', termRep, targetRep)
+          return new core.ChangeVariable('/', termRep, targetRep)
         case "raise":
-          return new core.ChangeVariableType1('^', termRep, targetRep)
+          return new core.ChangeVariable('^', termRep, targetRep)
         case "mod":
-          return new core.ChangeVariableType1('%', termRep, targetRep)
-        default:
-          error(`AssignError: Unrecognized operator '${op.sourceString}'.`, op)
+          return new core.ChangeVariable('%', termRep, targetRep)
       }
     },
     Statement_prnt(_print, argument, _semicolon) {
+      // check if its a variable
       const type = determineType(argument, context)
       return new core.PrintStatement(argument.rep(), type)
     },
@@ -307,7 +259,7 @@ export default function analyze(sourceCode) {
       // Add the automation to the context before analyzing the body, because
       // we want to allow automations to be recursive
       context.add(id, auto)
-      context = context.newChildContext({ inLoop: false, automation: identifier.sourceString })
+      context = context.newChildContext({ automation: identifier.sourceString })
       for (const p of paramsRep) context.add(p, new core.Variable(p, false, Type.ANY), params)
       const bodyRep = body.rep()
       context = context.parent
@@ -346,7 +298,7 @@ export default function analyze(sourceCode) {
       checkBoolean(condType, condition)
       return new core.IfStatement(condition.rep(), body.rep(), alternate.rep())
     },
-    ElseStmt(_if, _not, body) {
+    ElseStmt(_ifnot, body) {
       return body.rep()
     },
     Statement_while(_loop, _while, test, body) {
@@ -366,9 +318,7 @@ export default function analyze(sourceCode) {
       context = context.newChildContext({ inLoop: true })
       context.add(tempRep, new core.Variable(tempVar.sourceString, false, Type.ANY), tempVar)
       const bodyRep = body.rep()
-      console.log("context.parent:", context.parent)
       context = context.parent
-      console.log("context = context.parent:", context)
       return new core.ForLoop(tempRep, listRep, bodyRep)
     },
     Statement_break(_break, _semicolon) {
@@ -437,9 +387,9 @@ export default function analyze(sourceCode) {
     strlit(_open, chars, _close) {
       return new core.StringLiteral(this.sourceString)
     },
-    _terminal() {
-      return this.sourceString
-    },
+    // _terminal() {
+    //   return this.sourceString
+    // },
     _iter(children) {
       return children.map(child => child.rep())
     }
