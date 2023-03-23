@@ -2,45 +2,53 @@
 ![Logo](https://user-images.githubusercontent.com/70697018/214980482-a6f7f31c-f138-4bcc-a42e-be888ee06a19.png)
 ### by: CJ Plantemoli, Sam Richard, Chris Jansky, Jayden Craig
 
+[Official T.O.A.L. Website](https://cplant27.github.io/)
+
 ## Description
-Introducing a revolutionary new coding language that is designed to make programming more accessible to everyone. This language is written like plain English, so it is easy to understand and use, even for those with no prior coding experience. With its simple syntax and intuitive structure, this language makes it easy for anyone to create powerful and complex programs with ease. Whether you are a seasoned programmer or just starting out, this language is the perfect tool for creating efficient and effective code. So why wait? Start coding today with this new and user-friendly language!
+Introducing the Totally Original and Applicable Language (T.O.A.L.), a revolutionary new coding language that is designed to make programming more accessible to everyone. T.O.A.L. is written like plain English, so it is easy to understand and use, even for those with no prior coding experience. The simple syntax and intuitive structure make it easy for anyone to create powerful and complex programs with ease.
+
+Whether you are a seasoned programmer or just starting out, this language is the perfect tool for creating efficient and effective code. So why wait? Start coding today with this new and user-friendly language!
 
 ## Features
-- reads closely to english
-- built-in data structures
-- loops
-- conditionals
-- functions
+ - Feel like a pro with our simple syntax and commands
+ - Contain all the data you need with our built in list structure
+ - Easily and elegantly repeat tasks or iterate over data with loops
+ - Make decisions with ease using conditional statements
+ - Automate your code and call it anytime you want with custom automations
 
 ## Types
 
-| Types   | T.O.A.L.  |
-| ------- | ------------- |
-| string  | word          |
-| integer | number          |
-| float   | decimal        |
-| bool    | truefalse |
-
-
-## Built In Functions
-
-### Printing
-| JavaScript                      | T.O.A.L.              |
-| ------------------------------- | ------------------------ |
-| console.log(“Hello World!”); | print “Hello World!” |
+| JavaScript| T.O.A.L.   |
+| --------- | -----------|
+| string    | word       |
+| integer   | number     |
+| float     | decimal    |
+| bool      | true/false |
+| array     | list       |
 
 ## Variable Declaration and Assignment
+ 
+| JavaScript                     | T.O.A.L.                                |
+| ------------------------------ | --------------------------------------- |
+| let a = 55;                    | make a with 55;                         |
+| let b = “Hello World!”;        | make b with “Hello World!”;             |
+| let c = 1.7;                   | make c with 1.7;                        |
+| let d = true;                  | make d with true;                       |
+| let e = false;                 | make e with false;                      |
+| const var = “Constant”;        | constantly make var with "Constant";    |
 
-| JavaScript                               | T.O.A.L.                                                 |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| let x = 55;                               | make x with 55;                                                 |
-| let y = “Hello World!”;                        | make y with “Hello World!”;                                       |
-| let z = 1.7;                          | make z with 1.7;                                            |
-| let t = true;                            | make t with true;                                        |
-| let f = false;                           | make f with false;                                       |
-| const name = “Constant”; | constantly make name with "Constant"; |
+## Variable Incrementation
 
-## Arithmetic
+| JavaScript                     | T.O.A.L.            |
+| ------------------------------ | ------------------- |
+| x++                            | add 1 to x;         |
+| x--                            | subtract 1 from x   |
+| x = x * 1                      | multiply x by 1     |
+| x = x / 2                      | divide x by 2       |
+| x = x^3                        | raise x to the 3    |
+| x = x % 2                      | mod x by 2          |
+
+## Simple Arithmetic
 
 - Sum: `9 plus 10`
 - Difference: `9 minus 10`
@@ -49,22 +57,31 @@ Introducing a revolutionary new coding language that is designed to make program
 - Exponents: `9 to the 10`
 - Modulus: `9 mod 10`
 
+## Built In Functions
+
+### Printing
+ - print "Hello World!"
+
+### List Functions
+ - append(element, list)
+ - remove(index, list)
+
 ## Keywords
 
-| T.O.A.L.      | Traditional |
-| ---------------- | ----------- |
-| break             | break       |
-| false             | false       |
-| true              | true        |
-| autmation         | function    |
+| Traditional | T.O.A.L.    |
+| ----------- | ----------- |
+| break       | break       |
+| false       | false       |
+| true        | true        |
+| function    | automation  |
 | if          | if          |
-| empty            | void        |
-| loop over     | for         |
-| loop while     | while         |
-| print           | print       |
-| output          | return      |
+| else        | ifnot       |
+| for         | loop over   |
+| while       | loop while  |
+| print       | print       |
+| return      | output      |
 
-## Control Flow
+## Examples
 
 ### If Statements
 
@@ -75,6 +92,7 @@ Introducing a revolutionary new coding language that is designed to make program
 <td>
 
 ```javascript
+let x = 4;
 if (x > 4) {
   return true;
   
@@ -87,10 +105,11 @@ if (x > 4) {
 <td>
 
 ```
+make x with 4;
 if x is larger than 4 {
   output true;
 }
-if not {
+ifnot {
   output false;
 }
 ```
@@ -109,9 +128,9 @@ if not {
 ```javascript
 let list = [1, 2, 3, 4, 5];
 for element in list {
-    element++;
-    console.log(element);
-  }
+  element++;
+  console.log(element);
+}
 ```
 
 </td>
@@ -129,19 +148,7 @@ loop over element in list {
 </td>
 </table>
 
-## Comments
-
-```
-
-# this is a comment
-
-```
-
-## More Example Programs
-
-### **JavaScript** on the left; **T.O.A.L** on the right.
-
-Simple function to add two numbers
+### Automations
 
 <table>
 <tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
@@ -150,8 +157,8 @@ Simple function to add two numbers
 <td>
 
 ```javascript
-function add(a, b) {
-  return a + b;
+function addNums(num1, num2) {
+  return num1 + num2
 }
 ```
 
@@ -160,15 +167,15 @@ function add(a, b) {
 <td>
 
 ```
-automation add(a, b) {
-  output a plus b;
+automate addNums(num1, num2) {
+  output num1 plus num2;
 }
 ```
 
 </td>
 </table>
 
-Arrays
+### Automations
 
 <table>
 <tr> <th>JavaScript</th><th>T.O.A.L.</th><tr>
@@ -177,7 +184,7 @@ Arrays
 <td>
 
 ```javascript
-let arr = [2, 4, 6];
+// this is a comment
 ```
 
 </td>
@@ -185,7 +192,7 @@ let arr = [2, 4, 6];
 <td>
 
 ```
-make arr with [2, 4, 6];
+# this is a comment
 ```
 
 </td>
