@@ -21,9 +21,6 @@
 
 # make x with 1 plus (2 minus (3 to the 2) ) times 4;
 
-# add 5 to 5;                  # confusing error, expects not a numeral because it expects a variable id which '5' is invalid for
-
-
 #make y with [1,2,3];
 #loop over x in y{
 #    change x to 1;
@@ -31,4 +28,17 @@
 #}
 #make z with 2;
 
-make 5 with 5;
+#make 5 with 5;
+
+#add 5 to 5;                  # confusing error, expects not a numeral because it expects a variable id which '5' is invalid for
+
+
+automate add_one( INT: y, WRD: x ) -> INT {
+    add 1 to y;
+    output "hi";
+}
+make x with add_one("hello", "x");
+
+#CHECK PARAM TYPES
+#CHECK OUTPUT TYPES
+#SHOULD THROW AN ERROR ON EMPTY OUTPUT

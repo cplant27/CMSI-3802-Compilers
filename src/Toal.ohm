@@ -8,8 +8,8 @@ Toal {
              | append Exp "to" Var ("at" index)? ";"                   -- append
              | remove "item" index "from" Var ";"                      -- remove
              | if (BoolExp|Var) Block (ElseStmt)?                      -- if
-             | automate id "(" Params ")" Block                        -- autodec
-             | output (VarVal) ";"                                     -- output
+             | automate id "(" Params ") ->" type Block                -- autodec
+             | output (VarVal)? ";"                                     -- output
              | id ~space "(" Args ")" ";"                              -- callstmt
              | loop "while" BoolExp Block                              -- while
              | loop "over" id "in" (Var|List) Block                    -- for
@@ -22,7 +22,8 @@ Toal {
 
   ElseStmt   = ifnot Block
 
-  Params     = ListOf<id, ",">
+  Param      = type ":" id
+  Params     = ListOf<Param, ",">
   Args       = ListOf<(VarVal), ",">
   CallExp    = id ~space "(" Args ")"
 
@@ -35,9 +36,9 @@ Toal {
   Exp0       = "(" Exp ")"                            -- parentheses
 
   Exp        = Exp operator Exp                       -- expression
-             | Term
              | Exp0
              | CallExp
+             | Term
   operator   = "plus" | "minus" 
              | "times" | "divided by" 
              | "to the" | "mod"
@@ -64,6 +65,20 @@ Toal {
              | empty | automate | output 
              | loop| while | for| break 
              | add | subtract | multiply | divide | mod | raise
+
+  type       = bool | int | float | wrd | list | exp | boolexp | auto | anytype | nonetype
+
+  bool       = "BOOL" ~idchar
+  int        = "INT" ~idchar
+  float      = "FLT" ~idchar
+  wrd        = "WRD" ~idchar
+  list       = "LIST" ~idchar
+  exp        = "EXP" ~idchar
+  boolexp    = "BOOLEXP" ~idchar
+  auto       = "AUTO" ~idchar
+  anytype    = "ANY" ~idchar
+  nonetype   = "NONE" ~idchar
+
 
   make       = "make" ~idchar
   change     = "change" ~idchar

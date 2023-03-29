@@ -55,14 +55,20 @@ export class ChangeVariable {
 }
 
 export class Automation {
-  constructor(name, paramCount) {
-    Object.assign(this, { name, paramCount })
+  constructor(name, paramCount, outputType ) {
+    Object.assign(this, { name, paramCount, outputType })
+  }
+}
+
+export class Param {
+  constructor(name, type) {
+    Object.assign(this, { name, type })
   }
 }
 
 export class AutomationDeclaration {
-  constructor(name, auto, params, body) {
-    Object.assign(this, { name, auto, params, body })
+  constructor(name, auto, params, output, body) {
+    Object.assign(this, { name, auto, params, output, body })
   }
 }
 
@@ -114,17 +120,34 @@ export class StringLiteral {
 
 export class Type {
   // Type of all basic type int, float, string, etc. and superclass of others
-  static BOOLEAN = new Type("true/false")
-  static INT = new Type("integer")
-  static FLOAT = new Type("decimal")
-  static STRING = new Type("string")
-  static LIST = new Type("list")
-  static EXP = new Type("expression")
-  static BOOLEXP = new Type("true/false expression")
-  static AUTO = new Type("autmation call")
-  static ANY = new Type("any")
+  static BOOL = new Type("boolean (BOOL)")
+  static INT = new Type("integer (INT)")
+  static FLT = new Type("decimal (FLT)")
+  static WRD = new Type("word (WRD)")
+  static LIST = new Type("list (LIST)")
+  static EXP = new Type("expression (EXP)")
+  static BOOLEXP = new Type("boolean expression (BOOLEXP)")
+  static AUTO = new Type("autmation call (AUTO)")
+  static ANY = new Type("any type (ANY)")
+  static NONE = new Type("none (NONE)")
   constructor(description) {
     Object.assign(this, { description })
+  }
+
+
+  static fromName(name) {
+    switch (name) {
+      case "BOOL": return Type.BOOL
+      case "INT": return Type.INT
+      case "FLT": return Type.FLT
+      case "WRD": return Type.WRD
+      case "LIST": return Type.LIST
+      case "EXP": return Type.EXP
+      case "BOOLEXP": return Type.BOOLEXP
+      case "AUTO": return Type.AUTO
+      case "ANY": return Type.ANY
+      case "NONE": return Type.NONE
+    }
   }
 }
 

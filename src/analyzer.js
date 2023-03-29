@@ -18,6 +18,59 @@ function check(condition, message, node) {
   if (!condition) error(message, node)
 }
 
+function checkNotReadOnly(e, node) {
+  check(!e.readOnly, `AssignError: Cannot change value of constant '${e.name}'.`, node)
+}
+
+function checkInLoop(context, node) {
+  check(context.inLoop, "CallError: Break must be called in a loop.", node)
+}
+
+function checkInAutomation(context, node) {
+  check(context.automation, "CallError: Output must be called in an automation.", node)
+}
+
+function checkType(type, types, expectation, node) {
+  check(types.includes(type), `TypeError: Expected ${expectation}`, node)
+}
+
+function checkNumeric(t, node) {
+  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.ANY], `a numeric value, got type '${t.description}'.`, node)
+}
+
+function checkNumericOrString(t, node) {
+  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.STRING, Type.ANY], `a numeric or string value, got type '${t.description}'`, node)
+}
+
+function checkBoolean(t, node) {
+  checkType(t, [Type.BOOLEAN, Type.BOOLEXP, Type.ANY], `a true/false value, got type '${t.description}'`, node)
+}
+
+function checkList(t, node) {
+  checkType(t, [Type.LIST, Type.ANY], `a list, got type '${t.description}'`, node)
+}
+
+function checkReturnsNothing(f, node) {
+  console.log(f)
+  check(f.outputType === Type.VOID, "Something should be returned here", node)
+}
+
+function checkReturnsSomething(f, node) {
+  check(f.output !== Type.VOID, "Cannot return a value here", node)
+}
+
+function checkAutomationCallArguments(args, calleeType, node) {
+  checkArgumentsMatch(args, calleeType.paramTypes, node)
+}
+
+function checkArgumentsMatch(args, targetTypes) {
+  check(
+    targetTypes.length === args.length,
+    `${targetTypes.length} argument(s) required but ${args.length} passed`
+  )
+  targetTypes.forEach((type, i) => checkAssignable(args[i], { toType: type }))
+}
+
 function evaluateExpression(value) {
   
 }
@@ -56,42 +109,11 @@ function determineType(value, context) {
     return Type.AUTO
   }
   else if ( context.sees(value.rep()) ) { return findVarInContext(value.rep(), context).type }
-  else { error(`TypeDetermineError: Value '${val}' cannot be identified.`, value) }
-}
-
-function findVarInContext(val, context) {
-  if ( context.localvars.has(val) ) {
-    return context.localvars.get(val)
+  else { 
+    console.log(value.rep())
+    console.log(context.localvars)
+    error(`TypeDetermineError: Value '${val}' cannot be identified.`, value) 
   }
-  return findVarInContext(val, context.parent)
-}
-
-function checkNotReadOnly(e, node) {
-  check(!e.readOnly, `AssignError: Cannot change value of constant '${e.name}'.`, node)
-}
-
-function checkInLoop(context, node) {
-  check(context.inLoop, "CallError: Break must be called in a loop.", node)
-}
-
-function checkInAutomation(context, node) {
-  check(context.automation, "CallError: Output must be called in an automation.", node)
-}
-
-function checkType(type, types, expectation, node) {
-  check(types.includes(type), `TypeError: Expected ${expectation}`, node)
-}
-
-function checkNumeric(t, node) {
-  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.ANY], `a numeric value, got type '${t.description}'.`, node)
-}
-
-function checkNumericOrString(t, node) {
-  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.STRING, Type.ANY], `a numeric or string value, got type '${t.description}'`, node)
-}
-
-function checkBoolean(t, node) {
-  checkType(t, [Type.BOOLEAN, Type.BOOLEXP, Type.ANY], `a true/false value, got type '${t.description}'`, node)
 }
 
 // function checkInteger(t, node) {
@@ -106,35 +128,11 @@ function checkBoolean(t, node) {
 //   check(t instanceof Type, "Type expected", node)
 // }
 
-function checkList(t, node) {
-  checkType(t, [Type.LIST, Type.ANY], `a list, got type '${t.description}'`, node)
-}
-
 // function checkAllHaveSameType(expressions) {
 //   check(
 //     expressions.slice(1).every(e => e.type.isEquivalentTo(expressions[0].type)),
 //     "Not all elements have the same type"
 //   )
-// }
-
-// function checkReturnsNothing(f) {
-//   check(f.type.returnType === Type.VOID, "Something should be returned here")
-// }
-
-// function checkReturnsSomething(f) {
-//   check(f.type.returnType !== Type.VOID, "Cannot return a value here")
-// }
-
-// function checkArgumentsMatch(args, targetTypes) {
-//   check(
-//     targetTypes.length === args.length,
-//     `${targetTypes.length} argument(s) required but ${args.length} passed`
-//   )
-//   targetTypes.forEach((type, i) => checkAssignable(args[i], { toType: type }))
-// }
-
-// function checkAutomationCallArguments(args, calleeType) {
-//   checkArgumentsMatch(args, calleeType.paramTypes)
 // }
 
 class Context {
@@ -172,6 +170,13 @@ class Context {
     const c = new Context({ ...this, ...props, parent: this, localvars: new Map(), localautos: new Map()})
     return c
   }
+}
+
+function findVarInContext(val, context) {
+  if ( context.localvars.has(val) ) {
+    return context.localvars.get(val)
+  }
+  return findVarInContext(val, context.parent)
 }
 
 export default function analyze(sourceCode) {
@@ -252,18 +257,26 @@ export default function analyze(sourceCode) {
     Block(_open, body, _close) {
       return body.rep()
     },
-    Statement_autodec(_auto, identifier, _open, params, _close, body) {
+    Param(type, _colon, identifier){
+      return new core.Param(identifier.sourceString, Type.fromName(type.sourceString))
+    },
+    Statement_autodec(_auto, identifier, _open, params, _close, output, body) {
       const paramsRep = params.asIteration().rep()
       const id = identifier.sourceString
-      const auto = new core.Automation(id, paramsRep.length)
+      const outputType = Type.fromName(output.sourceString)
+      if (outputType === Type.ANY) error(`AutoError: Must specify automation output type (cannot be ANY).`, output)
+      const auto = new core.Automation(id, paramsRep.length, outputType)
       // Add the automation to the context before analyzing the body, because
       // we want to allow automations to be recursive
       context.add(id, auto)
       context = context.newChildContext({ automation: identifier.sourceString })
-      for (const p of paramsRep) context.add(p, new core.Variable(p, false, Type.ANY), params)
+      for (const p of paramsRep) {
+        if (p.type === Type.NONE) error(`AutoError: Type of parameter '${p.name}' cannot be NONE.`, params)
+        context.add(p.name, new core.Variable(p.name, false, p.type), params)
+      }
       const bodyRep = body.rep()
       context = context.parent
-      return new core.AutomationDeclaration(id, auto, paramsRep, bodyRep)
+      return new core.AutomationDeclaration(id, auto, paramsRep, outputType, bodyRep)
     },
     Statement_callstmt(identifier, _open, args, _close, _semicolon) {
       const auto = context.lookup(identifier.sourceString, identifier)
@@ -289,6 +302,10 @@ export default function analyze(sourceCode) {
     },
     Statement_output(_output, value, _semicolon) {
       checkInAutomation(context, _output)
+      if (value.rep().length === 0){
+        const auto = context.lookup(context.automation)
+        checkReturnsNothing(auto, value)
+      }
       const type = determineType(value, context)
       return new core.Output(value.rep(), type)
     },

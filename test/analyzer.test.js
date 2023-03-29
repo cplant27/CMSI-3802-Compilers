@@ -7,7 +7,7 @@ const semanticChecks = [
   ["variables can be all basic types", 'make a with 1; make b with 1.1; make c with true; make d with "string";'],
   ["variables can be expressions", 'make a with 2 plus 2; make b with 1 is less than 2;'],
   ["variables can be reassigned", 'make x with 1 ; change x to 2;'],
-  ["variables can be auto calls", 'automate x(y){} make z with x(1);'],
+  ["variables can be auto calls", 'automate x(ANY: y) -> ANY {} make z with x(1);'],
   ["if/ifnot statement", 'make x with 5 ; if x is 5 { print "X IS 5"; } ifnot { print "X IS NOT 5";}'],
   ["if statements with variable as condition", 'make x with true; if x{}'],
   ["while loop", 'make x with 0; loop while x is less than 5 {add 1 to x;}'],
@@ -33,7 +33,7 @@ const semanticChecks = [
   ],
   [
     "automations and calls",
-    `automate addNums( num , num2 ) {
+    `automate addNums(INT: num , INT: num2) -> INT {
       output num plus num2;
     } 
     make x with 9;
@@ -73,8 +73,8 @@ const semanticChecks = [
     make e with 1 is greater than or equal to 2 ;
     make f with 1 is less than or equal to 2 ;`
   ],
-  ["variables declared in scope", 'automate x(y) {} make y with 1;'],
-  ["call expressions", 'automate add_one(y) { add 1 to y; output y; } make x with 1; multiply x by addone(1);']
+  ["variables declared in scope", 'automate x(ANY: y) -> ANY {} make y with 1;'],
+  ["call expressions", 'automate add_one(INT: y) -> INT { add 1 to y; output y; } make x with add_one(1); add add_one(1) to x; multiply x by add_one(1);']
 ]
 
 const semanticErrors = [
@@ -90,19 +90,19 @@ const semanticErrors = [
   ["adding to an undeclared var", 'add 5 to x;', /ContextLookupError: Identifier 'x' not declared./],
 
   ["re-declared var id", "make x with 1; make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
-  ["re-declared auto id", "automate x(y){} automate x(z){}", /ContextAddError: Identifier 'x' has already been declared./],
-  ["var id re-declared as auto", "make x with 1; automate x(y){}", /ContextAddError: Identifier 'x' has already been declared./],
-  ["auto id re-declared as var", "automate x(y){} make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
+  ["re-declared auto id", "automate x(ANY: y) -> ANY {} automate x(ANY: z) -> ANY {}", /ContextAddError: Identifier 'x' has already been declared./],
+  ["var id re-declared as auto", "make x with 1; automate x(ANY: y) -> ANY {}", /ContextAddError: Identifier 'x' has already been declared./],
+  ["auto id re-declared as var", "automate x(ANY: y) -> ANY {} make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
 
-  ["changing the value of a function",'automate x(y){} change x to 5;',/AssignError: Cannot assign value to automation 'x'./],
-  ["adding to an automation",'automate x(y){} add 5 to x;',/AssignError: Cannot assign value to automation 'x'./],
-  ["multiplying an automation",'automate x(y){} multiply x by 5;',/AssignError: Cannot assign value to automation 'x'./],
+  ["changing the value of a function",'automate x(ANY: y) -> ANY {} change x to 5;',/AssignError: Cannot assign value to automation 'x'./],
+  ["adding to an automation",'automate x(ANY: y) -> ANY {} add 5 to x;',/AssignError: Cannot assign value to automation 'x'./],
+  ["multiplying an automation",'automate x(ANY: y) -> INT {} multiply x by 5;',/AssignError: Cannot assign value to automation 'x'./],
   ["an attempt to write a read-only var", "constantly make x with 1; change x to 2;", /AssignError: Cannot change value of constant 'x'./],
 
   ["calling a variable as a function", 'make x with 5; x(5);', /CallError: Trying to call Variable 'x' as an Automation./ ],
   ["calling variable as an automation 2", 'make x with 2; multiply x by x(2);', /CallError: Trying to call Variable 'x' as an Automation./ ],
-  ["too few arguments", 'automate x ( y, z ) { output y plus z; } x(1);', /CallError: Expected 2 arg\(s\), found 1./],
-  ["too many arguments", "automate x ( y, z ) { output y plus z; } x(1,2,3);", /CallError: Expected 2 arg\(s\), found 3./],
+  ["too few arguments", 'automate x ( INT: y, INT: z ) { output y plus z; } x(1);', /CallError: Expected 2 arg\(s\), found 1./],
+  ["too many arguments", "automate x ( INT: y, INT: z ) { output y plus z; } x(1,2,3);", /CallError: Expected 2 arg\(s\), found 3./],
   ["break outside of a loop", 'break;', /CallError: Break must be called in a loop./],
   ["output outside an automation", 'output 1;', /CallError: Output must be called in an automation./],
   
