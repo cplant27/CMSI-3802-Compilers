@@ -22,8 +22,8 @@ Whether you are a seasoned programmer or just starting out, this language is the
 | --------- | -----------|
 | string    | word       |
 | integer   | number     |
-| float     | decimal    |
-| bool      | true/false |
+| float     | number     |
+| boolean   | boolean    |
 | array     | list       |
 
 ## Variable Declaration and Assignment
@@ -60,11 +60,11 @@ Whether you are a seasoned programmer or just starting out, this language is the
 ## Built In Functions
 
 ### Printing
- - print "Hello World!"
+ - print "Hello World!";
 
 ### List Functions
- - append(element, list)
- - remove(index, list)
+ - append [element] to [list];
+ - remove [index] from [list];
 
 ## Keywords
 
