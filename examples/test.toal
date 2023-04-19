@@ -1,44 +1,21 @@
-# make コンパイラ with 100;
-
-# make x with 1 is 2;
-
-# make x with z;
-
-# constantly make y with 5.5 plus 8;
-# make x with y;
-# add 4 to y
-
 # print 5 to the "hello";         # make better error, like say expects number or variable
 
-# make x with 5;
-# make y with "Hello";
-# multiply y by x;
-
-# make x with ( 1 plus 1 ) minus 1;
-
-# automate x (y){}
-# make y with x(1);
-
-# make x with 1 plus (2 minus (3 to the 2) ) times 4;
-
-#make y with [1,2,3];
-#loop over x in y{
-#    change x to 1;
-#    make z with 2;
-#}
-#make z with 2;
-
 #make 5 with 5;
-
 #add 5 to 5;                  # confusing error, expects not a numeral because it expects a variable id which '5' is invalid for
 
 
-automate add_one( INT: y, WRD: x ) -> INT {
-    add 1 to y;
-    output "hi";
-}
-make x with add_one("hello", "x");
+#make x with 5;
+#subtract 5 from x;            #make better error for mismatch types, grammar catches it before analyzer
 
-#CHECK PARAM TYPES
-#CHECK OUTPUT TYPES
-#SHOULD THROW AN ERROR ON EMPTY OUTPUT
+# LISTS AND BOOLS DONT WORK
+# MAKE PRINTS A LIST OF INPUTS TO GET AROUND CONCATENATION
+# PRINT STMT DOESNT WORK WITH 0
+# possibly add lists can only be one type
+
+make x with 5;
+if x is 5 {
+  print "X IS 5";
+}
+ifnot {
+  print "X IS NOT 5";
+}

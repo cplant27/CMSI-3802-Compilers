@@ -4,15 +4,14 @@ Toal {
              | change Var "to"  (CallExp|VarVal) ";"                   -- varass
              | ChngVar0                                                -- chngvar0
              | ChngVar1                                                -- chngvar1
+            // | print ListOf<(CallExp|VarVal), ","> ";"                 -- prnt
              | print (CallExp|VarVal) ";"                              -- prnt
-             | append Exp "to" Var ("at" index)? ";"                   -- append
-             | remove "item" index "from" Var ";"                      -- remove
-             | if (BoolExp|Var) Block (ElseStmt)?                      -- if
+             | if (Boolean|CallExp|Var) Block (ElseStmt)?              -- if
              | automate id "(" Params ") ->" type Block                -- autodec
-             | output (VarVal)? ";"                                     -- output
              | id ~space "(" Args ")" ";"                              -- callstmt
-             | loop "while" BoolExp Block                              -- while
-             | loop "over" id "in" (Var|List) Block                    -- for
+             | output (VarVal)? ";"                                    -- output
+             | loop while (Boolean|Var) Block                          -- while
+             | loop over id "in" (Var|List) Block                      -- for
              | break ";"                                               -- break
 
   Var        = id
@@ -29,9 +28,8 @@ Toal {
 
   Term       = numeral | Var
   Word       = strlit
-  Boolean    = true | false | BoolExp
-  VarVal     = Boolean | Exp | Word | List
-  Element    = Exp | Word | Boolean | List
+  Boolean    = BoolExp | true | false
+  VarVal     = Boolean | Exp | Word | List | Var
 
   Exp0       = "(" Exp ")"                            -- parentheses
 
@@ -63,21 +61,19 @@ Toal {
              | append | remove
              | if | ifnot | true | false 
              | empty | automate | output 
-             | loop| while | for| break 
+             | loop| while | over | break 
              | add | subtract | multiply | divide | mod | raise
+             | type
 
-  type       = bool | int | float | wrd | list | exp | boolexp | auto | anytype | nonetype
+  type       = bool | num | word | list | auto | anytype | nonetype
 
-  bool       = "BOOL" ~idchar
-  int        = "INT" ~idchar
-  float      = "FLT" ~idchar
-  wrd        = "WRD" ~idchar
-  list       = "LIST" ~idchar
-  exp        = "EXP" ~idchar
-  boolexp    = "BOOLEXP" ~idchar
-  auto       = "AUTO" ~idchar
-  anytype    = "ANY" ~idchar
-  nonetype   = "NONE" ~idchar
+  bool       = "bool" ~idchar
+  num        = "num" ~idchar
+  word       = "word" ~idchar
+  list       = "list" ~idchar
+  auto       = "auto" ~idchar
+  anytype    = "any" ~idchar
+  nonetype   = "none" ~idchar
 
 
   make       = "make" ~idchar
@@ -99,7 +95,7 @@ Toal {
 
   loop       = "loop" ~idchar
   while      = "while" ~idchar
-  for        = "over" ~idchar
+  over       = "over" ~idchar
   break      = "break" ~idchar
 
   add        = "add" ~idchar
@@ -111,7 +107,6 @@ Toal {
 
   id         = ~keyword ~numeral idchar+
   idchar     = letter | digit | "_" 
-  index      = digit+
   space     += "#" (~"\n" any)*                       -- comment
   numeral    = ("-")? digit+ ("." digit+)?
   strlit     = "\"" (~"\"" any)* "\""

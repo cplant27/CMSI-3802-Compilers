@@ -35,89 +35,109 @@ function checkType(type, types, expectation, node) {
 }
 
 function checkNumeric(t, node) {
-  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.ANY], `a numeric value, got type '${t.description}'.`, node)
+  checkType(t, [Type.num, Type.any], `a numeric value, got type '${t.description}'.`, node)
 }
 
 function checkNumericOrString(t, node) {
-  checkType(t, [Type.INT, Type.FLOAT, Type.EXP, Type.STRING, Type.ANY], `a numeric or string value, got type '${t.description}'`, node)
+  checkType(t, [Type.num, Type.string, Type.any], `a numeric or string value, got type '${t.description}'.`, node)
 }
 
 function checkBoolean(t, node) {
-  checkType(t, [Type.BOOLEAN, Type.BOOLEXP, Type.ANY], `a true/false value, got type '${t.description}'`, node)
+  checkType(t, [Type.bool, Type.any], `a true/false value, got type '${t.description}'.`, node)
 }
 
 function checkList(t, node) {
-  checkType(t, [Type.LIST, Type.ANY], `a list, got type '${t.description}'`, node)
+  checkType(t, [Type.list, Type.any], `a list, got type '${t.description}'.`, node)
 }
 
 function checkReturnsNothing(f, node) {
-  console.log(f)
-  check(f.outputType === Type.VOID, "Something should be returned here", node)
+  check(f.type === Type.none, "Something should be returned here", node)
 }
 
 function checkReturnsSomething(f, node) {
-  check(f.output !== Type.VOID, "Cannot return a value here", node)
+  check(f.output !== Type.none, "Cannot return a value here", node)
 }
 
-function checkAutomationCallArguments(args, calleeType, node) {
-  checkArgumentsMatch(args, calleeType.paramTypes, node)
+function checkHasOutput(bodyRep, node) {
+  let hasOutput = false
+  let nested = false
+  bodyRep.forEach((stmt) => {
+    if (stmt.body) {
+      if (!(stmt instanceof core.AutomationDeclaration)) {
+        checkHasOutput(stmt.body, node)
+        nested = true
+      }
+    }
+    if (stmt instanceof core.Output) { hasOutput = true }
+  })
+  check(hasOutput || nested, `AutoError: '${node.sourceString}' must have an output.`)
 }
 
-function checkArgumentsMatch(args, targetTypes) {
+function checkHasNoOutput(bodyRep, node) {
+  let nested = false
+  bodyRep.forEach((stmt) => {
+    if (stmt.body) {
+      if (!(stmt instanceof core.AutomationDeclaration)) {
+        checkHasOutput(stmt.body, node)
+      }
+    }
+    else{ 
+      check(
+        !(stmt instanceof core.Output),
+        `AutoError: Automation '${node.sourceString}' has no output type, cannot contain an output.`,
+        node
+      )
+    }
+    check(!nested, `AutoError: Automation '${node.sourceString}' has no output type, cannot contain an output.`, node)
+  })
+}
+
+function checkAutoCallArgs(argsRep, auto, context, node) {
   check(
-    targetTypes.length === args.length,
-    `${targetTypes.length} argument(s) required but ${args.length} passed`
+    auto.params.length === argsRep.length,
+    `CallError: ${auto.params.length} argument(s) required, but ${argsRep.length} passed.`,
+    node
   )
-  targetTypes.forEach((type, i) => checkAssignable(args[i], { toType: type }))
+  auto.params.forEach((p, i) => {
+    if (context.isVarOrAuto(argsRep[i])) { 
+      check(
+        context.lookup(argsRep[i]).type === p.type || p.type === Type.any,
+        `CallError: Argument '${argsRep[i]}' (${context.lookup(argsRep[i]).type.description}) must be of type: ${p.type.description}.`,
+        node
+      )
+    }
+    else {
+      check(
+        argsRep[i].type === p.type || p.type === Type.any,
+        `CallError: Argument ${i+1} (${argsRep[i].type.description}) must be of type: ${p.type.description}.`,
+        node
+      )
+    }
+  })
 }
 
-function evaluateExpression(value) {
-  
+function checkTypesMatch(fromType, toType, id, node) {
+  check(
+    fromType === toType,
+    `AssignError: Variable '${id}' (${fromType.description}) cannot have a value of type ${toType.description}.`,
+    node
+  )
 }
 
-function evaluateBooleanExpression(value) {
-
+function isVar(sourceString, context) {
+  if ( context.localvars.has(sourceString) ) { return true }
+  else if ( context.parent !== null ) { return isVar(sourceString, context.parent) }
+  else { return false }
 }
 
-function runAutomation(value) {
-
-}
-
-function determineType(value, context) {
-  const val = value.sourceString
-  if ( val.startsWith('"') && val.endsWith('"') ) { return Type.STRING }
-  else if ( val.startsWith('[') && val.endsWith(']') ) { return Type.LIST }
-  else if ( !isNaN(val) ) {
-    if ( val.includes('.') ) { return Type.FLOAT }
-    return Type.INT
-  }
-  else if ( val === 'true' || val === 'false' ) { return Type.BOOLEAN }
-  else if ( value.rep() instanceof core.Expression ) {
-    evaluateExpression(value)
-    return Type.EXP
-  }
-  else if ( value.rep() instanceof core.ParenthesesExpression ) {
-    evaluateExpression(value.rep().contents)
-    return Type.EXP
-  }
-  else if ( value.rep() instanceof core.BooleanExpression ) {
-    evaluateBooleanExpression(value)
-    return Type.BOOLEXP
-  }
-  else if ( value.rep() instanceof core.CallExpression ) {
-    runAutomation(value)
-    return Type.AUTO
-  }
-  else if ( context.sees(value.rep()) ) { return findVarInContext(value.rep(), context).type }
-  else { 
-    console.log(value.rep())
-    console.log(context.localvars)
-    error(`TypeDetermineError: Value '${val}' cannot be identified.`, value) 
-  }
+function isAuto(sourceString, context) {
+  if ( context.localautos.has(sourceString) ) { return true }
+  else if ( context.parent !== null ) { return isAuto(sourceString, context.parent) }
+  else { return false }
 }
 
 // function checkInteger(t, node) {
-//   checkType(t, [Type.INT, Type.EXP, Type.ANY], `an integer value, got type '${t.description}'`, node)
+//   checkType(t, [Type.INT, Type.EXP, Type.any], `an integer value, got type '${t.description}'`, node)
 // }
 
 // function checkHaveSameType(t1, t2, node) {
@@ -148,11 +168,11 @@ class Context {
     // a T.O.A.L thing. Many other languages allow shadowing, and in these,
     // we would only have to check that name is not in this.locals
     if ( entity instanceof core.Variable ) {
-      if (this.sees(name)) error(`ContextAddError: Identifier '${name}' has already been declared.`, node)
+      check( !this.sees(name), `ContextAddError: Identifier '${name}' has already been declared.`, node)
       this.localvars.set(name, entity)
     }
     else if ( entity instanceof core.Automation ) {
-      if (this.sees(name)) error(`ContextAddError: Identifier '${name}' has already been declared.`, node)
+      check( !this.sees(name), `ContextAddError: Identifier '${name}' has already been declared.`, node)
       this.localautos.set(name, entity)
     }
   }
@@ -170,13 +190,13 @@ class Context {
     const c = new Context({ ...this, ...props, parent: this, localvars: new Map(), localautos: new Map()})
     return c
   }
-}
-
-function findVarInContext(val, context) {
-  if ( context.localvars.has(val) ) {
-    return context.localvars.get(val)
+  isVarOrAuto(sourceString) {
+    return ( isVar(sourceString, this) || isAuto(sourceString, this) )
   }
-  return findVarInContext(val, context.parent)
+  getRep(rawVal) {
+    if ( this.isVarOrAuto(rawVal.sourceString) ) { return this.lookup(rawVal.sourceString) }
+    else { return rawVal.rep() }
+  }
 }
 
 export default function analyze(sourceCode) {
@@ -191,33 +211,51 @@ export default function analyze(sourceCode) {
       return identifier.rep()
     },
     Statement_vardec(constant, _make, identifier, _with, initializer, _semicolon) {
-      const initializerRep = initializer.rep()
+      const initRep = context.getRep(initializer)
+      check(
+        initRep.type,
+        `AssignError: '${initializer.sourceString}' is not defined.`,
+        initializer
+      )
+      check(
+        initRep.type !== Type.none,
+        `AssignError: Cannot assign a value with type 'none' to a variable.`,
+        initializer
+      )
       const id = identifier.sourceString
       const readOnly = constant.sourceString === "constantly"
-      const type = determineType(initializer, context)
-      const variable = new core.Variable(id, readOnly, type)
-      context.add(id, variable, identifier)
-      return new core.VariableDeclaration(variable, initializerRep)
+      const decVar = new core.Variable(id, readOnly, initRep.type)
+      context.add(id, decVar, identifier)
+      return new core.VariableDeclaration(decVar, initRep)
     },
-    Statement_varass(_change, identifier, _to, expression, _semicolon) {
+    Statement_varass(_change, identifier, _to, value, _semicolon) {
       const id = identifier.sourceString
-      const variable = context.lookup(identifier.sourceString, identifier)
-      if ( !(variable instanceof core.Variable) ) { error(`AssignError: Cannot assign value to automation '${id}'.`, identifier) }
-      checkNotReadOnly(variable, identifier)
-      const type = determineType(expression, context)
-      context.localvars.set(id, variable)
-      return new core.Assignment(identifier.rep(), expression.rep(), type)
+      const valueRep = context.getRep(value)
+      if ( !valueRep?.type ) error(`AssignError: '${value.sourceString}' is not defined.`, value )
+      const assVar = context.lookup(identifier.sourceString, identifier)
+      check(
+        assVar instanceof core.Variable,
+        `AssignError: Cannot assign value to automation '${id}'.`,
+        identifier
+      )
+      checkNotReadOnly(assVar, identifier)
+      checkTypesMatch(assVar.type, valueRep.type, id, value)
+      context.localvars.set(id, assVar)
+      return new core.Assignment(identifier.rep(), valueRep)
     },
     ChngVar1(op, term, _tofrom, target, _semicolon) {
-      const targetRep = target.rep()
-      const termRep = term.rep()
+      const targetRep = context.getRep(target)
+      const termRep = context.getRep(term)
       const targetVariable = context.lookup(target.sourceString, target)
-      if ( !(targetVariable instanceof core.Variable) ) { error(`AssignError: Cannot assign value to automation '${targetRep}'.`, target) }
+      check(
+        (targetVariable instanceof core.Variable),
+        `AssignError: Cannot assign value to automation '${target.sourceString}'.`,
+        target
+      )
       const targetType = targetVariable.type
-      checkNumeric(targetType, target)
+      checkNumeric(targetType, target)            //in test.toal 'add 5 to 5' confusing error
       checkNotReadOnly(targetVariable, target)
-      const termType = determineType(term, context)
-      checkNumeric(termType, term)
+      checkNumeric(termRep.type, term)        //grammar catches this before analyzer for non-vars
       switch (op.sourceString) {
         case "add":
           return new core.ChangeVariable('+', termRep, targetRep)
@@ -226,36 +264,33 @@ export default function analyze(sourceCode) {
       }
     },
     ChngVar0(op, target, _by, term, _semicolon) {
-      const targetRep = target.rep()
-      const termRep = term.rep()
+      const targetRep = context.getRep(target)
+      const termRep = context.getRep(term)
       const targetVariable = context.lookup(target.sourceString, target)
-      if ( !(targetVariable instanceof core.Variable) ) { error(`AssignError: Cannot assign value to automation '${targetRep}'.`, target) }
+      check(
+        targetVariable instanceof core.Variable,
+        `AssignError: Cannot assign value to automation '${target.sourceString}'.`,
+        target
+      )
       const targetType = targetVariable.type
-      checkNumeric(targetType, target)
+      checkNumeric(targetType, target)            //in test.toal 'add 5 to 5' confusing error
       checkNotReadOnly(targetVariable, target)
-      const termType = determineType(term, context)
-      checkNumeric(termType, term)
+      checkNumeric(termRep.type, term)        //grammar catches this before analyzer for non-vars
       switch (op.sourceString) {
         case "multiply":
-          return new core.ChangeVariable('*', termRep, targetRep)
+          return new core.ChangeVariable('*', targetRep, termRep)
         case "divide":
-          return new core.ChangeVariable('/', termRep, targetRep)
+          return new core.ChangeVariable('/', targetRep, termRep)
         case "raise":
-          return new core.ChangeVariable('^', termRep, targetRep)
+          return new core.ChangeVariable('^', targetRep, termRep)
         case "mod":
-          return new core.ChangeVariable('%', termRep, targetRep)
+          return new core.ChangeVariable('%', targetRep, termRep)
       }
     },
     Statement_prnt(_print, argument, _semicolon) {
-      // check if its a variable
-      const type = determineType(argument, context)
-      return new core.PrintStatement(argument.rep(), type)
-    },
-    List(_open, elements, _close) {
-      return elements.asIteration().rep()
-    },
-    Block(_open, body, _close) {
-      return body.rep()
+      const argRep = context.getRep(argument)
+      if ( !argRep?.type ) error(`ContextLookupError: '${argument.sourceString}' is not defined.`, argument )
+      return new core.PrintStatement(argRep)
     },
     Param(type, _colon, identifier){
       return new core.Param(identifier.sourceString, Type.fromName(type.sourceString))
@@ -264,64 +299,75 @@ export default function analyze(sourceCode) {
       const paramsRep = params.asIteration().rep()
       const id = identifier.sourceString
       const outputType = Type.fromName(output.sourceString)
-      if (outputType === Type.ANY) error(`AutoError: Must specify automation output type (cannot be ANY).`, output)
-      const auto = new core.Automation(id, paramsRep.length, outputType)
+      check(outputType !== Type.any, `AutoError: Must specify automation output type (cannot be ANY).`, output)
+      const auto = new core.Automation(id, paramsRep, outputType)
       // Add the automation to the context before analyzing the body, because
       // we want to allow automations to be recursive
       context.add(id, auto)
       context = context.newChildContext({ automation: identifier.sourceString })
       for (const p of paramsRep) {
-        if (p.type === Type.NONE) error(`AutoError: Type of parameter '${p.name}' cannot be NONE.`, params)
+        check(p.type !== Type.none, `AutoError: Type of parameter '${p.name}' cannot be NONE.`, params)
         context.add(p.name, new core.Variable(p.name, false, p.type), params)
       }
       const bodyRep = body.rep()
+      if (auto.type === Type.none) { checkHasNoOutput(bodyRep, identifier) }
+      else { checkHasOutput(bodyRep, identifier) }
       context = context.parent
       return new core.AutomationDeclaration(id, auto, paramsRep, outputType, bodyRep)
     },
     Statement_callstmt(identifier, _open, args, _close, _semicolon) {
       const auto = context.lookup(identifier.sourceString, identifier)
-      if ( auto instanceof core.Variable ) { error(`CallError: Trying to call Variable '${identifier.sourceString}' as an Automation.`, identifier) }
-      const argsRep = args.asIteration().rep()
       check(
-        argsRep.length === auto.paramCount,
-        `CallError: Expected ${auto.paramCount} arg(s), found ${argsRep.length}.`,
-        _open
+        !(auto instanceof core.Variable),
+        `CallError: Trying to call Variable '${identifier.sourceString}' as an Automation.`,
+        identifier
       )
+      const argsRep = args.asIteration().rep()
+      checkAutoCallArgs(argsRep, auto, context, args)
       return new core.CallStatement(auto, argsRep)
     },
     CallExp(identifier, _open, args, _close) {
       const auto = context.lookup(identifier.sourceString, identifier)
-      if ( auto instanceof core.Variable ) { error(`CallError: Trying to call Variable '${identifier.sourceString}' as an Automation.`, identifier) }
-      const argsRep = args.asIteration().rep()
       check(
-        argsRep.length === auto.paramCount,
-        `CallError: Expected ${auto.paramCount} arg(s), found ${argsRep.length}.`,
-        _open
+        !(auto instanceof core.Variable),
+        `CallError: Trying to call Variable '${identifier.sourceString}' as an Automation.`,
+        identifier
       )
+      const argsRep = args.asIteration().rep()
+      checkAutoCallArgs(argsRep, auto, context, args)
       return new core.CallExpression(auto, argsRep)
     },
     Statement_output(_output, value, _semicolon) {
+      let valueRep = context.getRep(value)         // returns an array when value is not a variable
+      check(valueRep.length !== 0, `AutoError: Must output a value.`, _output)
+      if (Array.isArray(valueRep)) { valueRep = valueRep[0] }       //quick fix for above
       checkInAutomation(context, _output)
-      if (value.rep().length === 0){
-        const auto = context.lookup(context.automation)
-        checkReturnsNothing(auto, value)
+      const auto = context.lookup(context.automation)
+      if (value.rep().length === 0) { checkReturnsNothing(auto, value) }
+      else{ 
+        checkReturnsSomething(auto, value)
+        check(
+          valueRep.type === auto.type, 
+          `AutoError: Automation '${auto.name}' cannot output a value of type '${valueRep.type.description}' (must output '${auto.type.description}').`, 
+          value
+        )
       }
-      const type = determineType(value, context)
-      return new core.Output(value.rep(), type)
+      return new core.Output(value.rep(), valueRep.type)
+    },
+    Block(_open, body, _close) {
+      return body.rep()
     },
     Statement_if(_if, condition, body, alternate) {
-      const condRep = condition.rep()
-      const condType = determineType(condition, context)
-      checkBoolean(condType, condition)
+      const conditionRep = context.getRep(condition)
+      checkBoolean(conditionRep.type, condition)
       return new core.IfStatement(condition.rep(), body.rep(), alternate.rep())
     },
     ElseStmt(_ifnot, body) {
-      return body.rep()
+      return new core.ElseStatement(body.rep())
     },
     Statement_while(_loop, _while, test, body) {
-      const testRep = test.rep()
-      const testType = determineType(test, context)
-      checkBoolean(testType, test)
+      const testRep = context.getRep(test)
+      checkBoolean(testRep.type, test)
       context = context.newChildContext({ inLoop: true })
       const bodyRep = body.rep()
       context = context.parent
@@ -329,11 +375,11 @@ export default function analyze(sourceCode) {
     },
     Statement_for(_loop, _over, tempVar, _in, list, body) {
       const tempRep = tempVar.rep()
-      const listRep = list.rep()
-      const listType = determineType(list, context)
-      checkList(listType, list)
+      const listRep = context.getRep(list)
+      // FIX LISTS
+      checkList(listRep.type, list)
       context = context.newChildContext({ inLoop: true })
-      context.add(tempRep, new core.Variable(tempVar.sourceString, false, Type.ANY), tempVar)
+      context.add(tempRep, new core.Variable(tempVar.sourceString, false, Type.any), tempVar)
       const bodyRep = body.rep()
       context = context.parent
       return new core.ForLoop(tempRep, listRep, bodyRep)
@@ -346,12 +392,10 @@ export default function analyze(sourceCode) {
       return new core.ParenthesesExpression(expression.rep())
     },
     Exp_expression(left, operator, right) {
-      const rightRep = right.rep()
-      const leftRep = left.rep()
-      const rightType = determineType(right, context)
-      const leftType = determineType(left, context)
-      checkNumeric(rightType, right)
-      checkNumeric(leftType, left)
+      const leftRep = context.getRep(left)
+      const rightRep = context.getRep(right)
+      checkNumeric(rightRep.type, right)
+      checkNumeric(leftRep.type, left)
       switch (operator.sourceString) {
         case "plus":
           return new core.Expression('+', leftRep, rightRep)
@@ -368,19 +412,17 @@ export default function analyze(sourceCode) {
       }
     },
     BoolExp(left, operator, right) {
-      const rightRep = right.rep()
-      const leftRep = left.rep()
-      const rightType = determineType(right, context)
-      const leftType = determineType(left, context)
-      checkNumericOrString(rightType, right)
-      checkNumericOrString(leftType, left)
+      const leftRep = context.getRep(left)
+      const rightRep = context.getRep(right)
+      checkNumericOrString(leftRep.type, left)
+      checkNumericOrString(rightRep.type, right)
       switch (operator.sourceString) {
         case "is greater than":
           return new core.BooleanExpression('>', leftRep, rightRep)
         case "is less than":
           return new core.BooleanExpression('<', leftRep, rightRep)
         case "is":
-          return new core.BooleanExpression('=', leftRep, rightRep)
+          return new core.BooleanExpression('==', leftRep, rightRep)
         case "is not":
           return new core.BooleanExpression('!=', leftRep, rightRep)
         case "is greater than or equal to":
@@ -404,17 +446,18 @@ export default function analyze(sourceCode) {
     strlit(_open, chars, _close) {
       return new core.StringLiteral(this.sourceString)
     },
-    // _terminal() {
-    //   return this.sourceString
-    // },
+    List(_open, elements, _close) {
+      return new core.List(elements.asIteration().rep())
+    },
     _iter(children) {
       return children.map(child => child.rep())
     }
   })
 
-  // for (const [name, entity] of Object.entries(core.standardLibrary)) {
-  //   context.localvars.set(name, entity)
-  // }
+  for (const [name, entity] of Object.entries(core.standardLibrary)) {
+    context.localvars.set(name, entity)
+  }
+  console.log(sourceCode)
   const match = toalGrammar.match(sourceCode) 
   if (!match.succeeded()) error(match.message) 
   // console.log("Grammar Check Passed!") 

@@ -19,50 +19,54 @@ export class VariableDeclaration {
 }
 
 export class Assignment {
-  constructor(target, source, type) {
-    Object.assign(this, { target, source, type })
-  }
-}
-
-export class PrintStatement {
-  constructor(argument, type) {
-    Object.assign(this, { argument, type })
-  }
-}
-
-export class Expression {
-  constructor(op, left, right) {
-    Object.assign(this, {op, left, right })
-  }
-}
-
-export class ParenthesesExpression {
-  constructor( contents ) {
-    this.contents = contents
-  }
-}
-
-export class BooleanExpression {
-  constructor(op, left, right) {
-    Object.assign(this, { op, left, right })
+  constructor(target, value) {
+    Object.assign(this, { target, value })
   }
 }
 
 export class ChangeVariable {
   constructor(op, term, target) {
     Object.assign(this, { op, term, target })
+    this.type = Type.num
   }
 }
 
-export class Automation {
-  constructor(name, paramCount, outputType ) {
-    Object.assign(this, { name, paramCount, outputType })
+export class PrintStatement {
+  constructor(argument) {
+    Object.assign(this, { argument })
+  }
+}
+
+export class Expression {
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right })
+    this.type = Type.num
+  }
+}
+
+export class ParenthesesExpression {
+  constructor( contents ) {
+    this.contents = contents
+    this.type = contents.type
+  }
+}
+
+export class BooleanExpression {
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right })
+    this.type = Type.bool
   }
 }
 
 export class Param {
   constructor(name, type) {
     Object.assign(this, { name, type })
+  }
+}
+
+export class Automation {
+  constructor(name, params, type ) {
+    Object.assign(this, { name, params, type })
   }
 }
 
@@ -75,12 +79,14 @@ export class AutomationDeclaration {
 export class CallStatement {
   constructor(callee, args) {
     Object.assign(this, { callee, args })
+    this.type = callee.type
   }
 }
 
 export class CallExpression {
   constructor(callee, args) {
     Object.assign(this, { callee, args })
+    this.type = callee.type
   }
 }
 
@@ -91,8 +97,14 @@ export class Output {
 }
 
 export class IfStatement {
-  constructor(test, consequent) {
-    Object.assign(this, { test, consequent })
+  constructor(test, body, alternate) {
+    Object.assign(this, { test, body, alternate })
+  }
+}
+
+export class ElseStatement {
+  constructor(body) {
+    this.body = body
   }
 }
 
@@ -112,52 +124,62 @@ export class Break {
   // Intentionally empty
 }
 
+export class List {
+  constructor(elements) {
+    this.elements = elements
+    this.type = Type.list
+  }
+}
+
 export class StringLiteral {
   constructor(contents) {
     this.contents = contents
+    this.type = Type.word
   }
 }
 
 export class Type {
   // Type of all basic type int, float, string, etc. and superclass of others
-  static BOOL = new Type("boolean (BOOL)")
-  static INT = new Type("integer (INT)")
-  static FLT = new Type("decimal (FLT)")
-  static WRD = new Type("word (WRD)")
-  static LIST = new Type("list (LIST)")
-  static EXP = new Type("expression (EXP)")
-  static BOOLEXP = new Type("boolean expression (BOOLEXP)")
-  static AUTO = new Type("autmation call (AUTO)")
-  static ANY = new Type("any type (ANY)")
-  static NONE = new Type("none (NONE)")
+  static bool = new Type("boolean")
+  static num = new Type("number")
+  static word = new Type("word")
+  static list = new Type("list")
+  static auto = new Type("automation")
+  static any = new Type("any")
+  static none = new Type("none")
   constructor(description) {
     Object.assign(this, { description })
   }
 
 
   static fromName(name) {
+    // make 1 number and boolean type
     switch (name) {
-      case "BOOL": return Type.BOOL
-      case "INT": return Type.INT
-      case "FLT": return Type.FLT
-      case "WRD": return Type.WRD
-      case "LIST": return Type.LIST
-      case "EXP": return Type.EXP
-      case "BOOLEXP": return Type.BOOLEXP
-      case "AUTO": return Type.AUTO
-      case "ANY": return Type.ANY
-      case "NONE": return Type.NONE
+      case "bool": return Type.bool
+      case "num": return Type.num
+      case "word": return Type.word
+      case "list": return Type.list
+      case "auto": return Type.auto
+      case "any": return Type.any
+      case "none": return Type.none
     }
   }
 }
 
 export const standardLibrary = Object.freeze({
-  e: new Variable("e", true),
-  pi: new Variable("pi", true),
-  append: new Automation("append", 2),
-  remove: new Automation("remove", 2),
-  typeOf: new Automation("typeOf", 1),
+  append: new Automation("append", 2,Type.none),
+  remove: new Automation("remove", 2, Type.none),
+  length: new Automation("length", 1, Type.num),
+  range: new Automation("range", 2, Type.list),
+  type: new Automation("type", 1, Type.word),
+  π: new Variable("π", true, Type.num),
+  inf: new Variable("inf", true, Type.num),
+  true: new Variable("true", true, Type.bool),
+  false: new Variable("false", true, Type.bool)
 });
+
+Number.prototype.type = Type.num
+Boolean.prototype.type = Type.bool
 
 // Return a compact and pretty string representation of the node graph,
 // taking care of cycles. Written here from scratch because the built-in

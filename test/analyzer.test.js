@@ -4,10 +4,11 @@ import analyze from "../src/analyzer.js"
 
 const semanticChecks = [
   ["print statements", 'make x with 1 ; print x; print 5; print "hello"; print true;'],
+  ["print statements with 0", 'print 0;'],
   ["variables can be all basic types", 'make a with 1; make b with 1.1; make c with true; make d with "string";'],
   ["variables can be expressions", 'make a with 2 plus 2; make b with 1 is less than 2;'],
   ["variables can be reassigned", 'make x with 1 ; change x to 2;'],
-  ["variables can be auto calls", 'automate x(ANY: y) -> ANY {} make z with x(1);'],
+  ["variables can be auto calls", 'automate x(any: y) -> num { output 0; } make z with x(1);'],
   ["if/ifnot statement", 'make x with 5 ; if x is 5 { print "X IS 5"; } ifnot { print "X IS NOT 5";}'],
   ["if statements with variable as condition", 'make x with true; if x{}'],
   ["while loop", 'make x with 0; loop while x is less than 5 {add 1 to x;}'],
@@ -33,13 +34,14 @@ const semanticChecks = [
   ],
   [
     "automations and calls",
-    `automate addNums(INT: num , INT: num2) -> INT {
-      output num plus num2;
+    `automate addNums( num: num1 , num: num2) -> num {
+      output num1 plus num2;
     } 
     make x with 9;
     make y with 1;
     change x to addNums(x, 5);
-    addNums(x, y);`
+    addNums(x, y);
+    addNums(addNums(x,y), addNums(x,y));`
   ],
   [
     "operators",
@@ -70,11 +72,21 @@ const semanticChecks = [
     make b with 1 is less than 2 ;
     make c with 1 is 2 ;
     make d with 1 is not 2 ;
-    make e with 1 is greater than or equal to 2 ;
+    make x with 1 is greater than or equal to 2 ;
     make f with 1 is less than or equal to 2 ;`
   ],
-  ["variables declared in scope", 'automate x(ANY: y) -> ANY {} make y with 1;'],
-  ["call expressions", 'automate add_one(INT: y) -> INT { add 1 to y; output y; } make x with add_one(1); add add_one(1) to x; multiply x by add_one(1);']
+  ["variables declared in scope", 'automate x(any: y) -> num { output 0; } make y with 1;'],
+  ["call expressions", 'automate add_one( num: y) -> num { add 1 to y; output y; } make x with add_one(1); add add_one(1) to x; multiply x by add_one(1);'],
+  ["nested outputs", 'automate x(num: y) -> num { if true { output 4; } }'],
+  [
+    "auto-ception",
+   `automate add_one(num: y) -> none {
+      add 4 to y;
+      automate add_two(num: z) -> num {
+        output 2;
+      }
+    }`
+  ],
 ]
 
 const semanticErrors = [
@@ -88,27 +100,34 @@ const semanticErrors = [
 
   ["assigning unidintified identifier", 'change x to 1;', /ContextLookupError: Identifier 'x' not declared./],
   ["adding to an undeclared var", 'add 5 to x;', /ContextLookupError: Identifier 'x' not declared./],
+  ["function called out of scope", 'automate add_one(num: y) -> none { add 4 to y; automate add_two(num: z) -> num { output 2; } add_two(5); } add_two(5);', /ContextLookupError: Identifier 'add_two' not declared./],
 
   ["re-declared var id", "make x with 1; make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
-  ["re-declared auto id", "automate x(ANY: y) -> ANY {} automate x(ANY: z) -> ANY {}", /ContextAddError: Identifier 'x' has already been declared./],
-  ["var id re-declared as auto", "make x with 1; automate x(ANY: y) -> ANY {}", /ContextAddError: Identifier 'x' has already been declared./],
-  ["auto id re-declared as var", "automate x(ANY: y) -> ANY {} make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
+  ["re-declared auto id", "automate x(any: y) -> num { output 0; } automate x(any: z) -> num { output 0; }", /ContextAddError: Identifier 'x' has already been declared./],
+  ["var id re-declared as auto", "make x with 1; automate x(any: y) -> num { output 0; }", /ContextAddError: Identifier 'x' has already been declared./],
+  ["auto id re-declared as var", "automate x(any: y) -> num { output 0; } make x with 2;", /ContextAddError: Identifier 'x' has already been declared./],
 
-  ["changing the value of a function",'automate x(ANY: y) -> ANY {} change x to 5;',/AssignError: Cannot assign value to automation 'x'./],
-  ["adding to an automation",'automate x(ANY: y) -> ANY {} add 5 to x;',/AssignError: Cannot assign value to automation 'x'./],
-  ["multiplying an automation",'automate x(ANY: y) -> INT {} multiply x by 5;',/AssignError: Cannot assign value to automation 'x'./],
+  ["changing the value of a function",'automate x(any: y) -> num { output 0; } change x to 5;',/AssignError: Cannot assign value to automation 'x'./],
+  ["adding to an automation",'automate x(any: y) -> num { output 0; } add 5 to x;',/AssignError: Cannot assign value to automation 'x'./],
+  ["multiplying an automation",'automate x(any: y) -> num { output 0; } multiply x by 5;',/AssignError: Cannot assign value to automation 'x'./],
   ["an attempt to write a read-only var", "constantly make x with 1; change x to 2;", /AssignError: Cannot change value of constant 'x'./],
+  ["assigning an undeclared variable",'make x with 1; change x to y;',/AssignError: 'y' is not defined./],
+
+  ["incorrect output type", 'automate hello() -> word { print "hello"; output 0; }', /AutoError: Automation 'hello' cannot output a value of type 'number' \(must output 'word'\)./],
+  ["none automation with an output", 'automate nothing() -> none { output 5; }', /AutoError: Automation 'nothing' cannot output a value of type 'number' \(must output 'none'\)./],
+  ["nested outputs", 'automate x(num: y) -> none { if true { output 4; } }', /AutoError: Automation 'x' cannot output a value of type 'number' \(must output 'none'\)./],
 
   ["calling a variable as a function", 'make x with 5; x(5);', /CallError: Trying to call Variable 'x' as an Automation./ ],
   ["calling variable as an automation 2", 'make x with 2; multiply x by x(2);', /CallError: Trying to call Variable 'x' as an Automation./ ],
-  ["too few arguments", 'automate x ( INT: y, INT: z ) { output y plus z; } x(1);', /CallError: Expected 2 arg\(s\), found 1./],
-  ["too many arguments", "automate x ( INT: y, INT: z ) { output y plus z; } x(1,2,3);", /CallError: Expected 2 arg\(s\), found 3./],
+  ["too few arguments", 'automate x ( num: y, num: z ) -> num { output y plus z; } x(1);', /CallError: 2 argument\(s\) required, but 1 passed./],
+  ["too many arguments", "automate x ( num: y, num: z ) -> num { output y plus z; } x(1,2,3);", /CallError: 2 argument\(s\) required, but 3 passed./],
   ["break outside of a loop", 'break;', /CallError: Break must be called in a loop./],
   ["output outside an automation", 'output 1;', /CallError: Output must be called in an automation./],
-  
-  ["printing undeclared identifiers", "print x;", /TypeDetermineError: Value 'x' cannot be identified./],
-  ["checks types when modifying variables", 'make x with 5; make y with "hello"; add y to x;', /TypeError: Expected a numeric value, got type 'string'./],
-  ["non-boolean variable for if statement", 'make x with 5; if x{}', /TypeError: Expected a true\/false value, got type 'integer'/],
+  ["incorrect argument types", 'automate a(num: x, num: y) -> num { output 1; } make x with a(1,"hello");', /CallError: Argument 2 \(word\) must be of type: number./],
+
+  ["printing undeclared identifiers", "print x;", /ContextLookupError: 'x' is not defined./],
+  ["checks types when incrementing variables", 'make x with 5; make y with "hello"; add y to x;', /TypeError: Expected a numeric value, got type 'word'./],
+  ["non-boolean variable for if statement", 'make x with 5; if x {}', /TypeError: Expected a true\/false value, got type 'number'./],
 ]
 
 const sample = `
@@ -123,12 +142,16 @@ const sample = `
 const expected = `   1 | Program statements=[#2,#5]
    2 | VariableDeclaration variable=#3 initializer=5
    3 | Variable name='x' readOnly=false type=#4
-   4 | Type description='integer'
-   5 | IfStatement test=#6 consequent=[#7]
-   6 | BooleanExpression op='=' left='x' right=5
-   7 | PrintStatement argument=#8 type=#9
-   8 | StringLiteral contents='"X IS 5"'
-   9 | Type description='string'`
+   4 | Type description='number'
+   5 | IfStatement test=#6 body=[#8] alternate=[#11]
+   6 | BooleanExpression op='==' left=#3 right=5 type=#7
+   7 | Type description='boolean'
+   8 | PrintStatement argument=#9
+   9 | StringLiteral contents='"X IS 5"' type=#10
+  10 | Type description='word'
+  11 | ElseStatement body=[#12]
+  12 | PrintStatement argument=#13
+  13 | StringLiteral contents='"X IS NOT 5"' type=#10`
 
 describe("The analyzer", () => {
   for (const [scenario, source] of semanticChecks) {

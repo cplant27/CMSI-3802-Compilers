@@ -12,9 +12,9 @@ Prints to stdout according to <outputType>, which must be one of:
   js         the translation to JavaScript
 `;
 
-const TOALERRORS = true
+const OnlyToalErrors = false
 
-async function compileFromFile(filename, outputType, showFullErrors = TOALERRORS) {
+async function compileFromFile(filename, outputType, showFullErrors = !OnlyToalErrors) {
   // Show only T.O.A.L. generated errors (does not work for 'npm test')
   if (!showFullErrors) {
     try {
