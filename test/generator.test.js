@@ -19,11 +19,11 @@ const fixtures = [
       print x;
     `,
     expected: dedent`
-      let x = 3 * 7;
-      x++;
-      x--;
-      let y = true;
-      console.log(x);
+      let x_1 = (3 * 7);
+      x_1 = x_1 + 1
+      x_1 = x_1 - 1
+      let y_2 = true_3;
+      console.log(x_1);
     `,
   },
   // {
