@@ -7,14 +7,19 @@ import compile from "./compiler.js";
 const help = `T.O.A.L. Compiler
 Syntax: node toal.js <filename> <outputType>
 Prints to stdout according to <outputType>, which must be one of:
+  parsed     the parse tree
   analyzed   the semantically analyzed representation
   optimized  the optimized semantically analyzed representation
   js         the translation to JavaScript
 `;
 
-const OnlyToalErrors = false
+const OnlyToalErrors = false;
 
-async function compileFromFile(filename, outputType, showFullErrors = !OnlyToalErrors) {
+async function compileFromFile(
+  filename,
+  outputType,
+  showFullErrors = !OnlyToalErrors
+) {
   // Show only T.O.A.L. generated errors (does not work for 'npm test')
   if (!showFullErrors) {
     try {

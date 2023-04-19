@@ -1,4 +1,5 @@
 import analyze from "./analyzer.js";
+import parse from "./parser.js";
 import optimize from "./optimizer.js";
 import generate from "./generator.js";
 
@@ -8,7 +9,9 @@ export default function compile(source, outputType) {
       `Unknown output type: ${outputType} \nOutput types: "analyzed", "optimized", "js"`
     );
   }
-  const analyzed = analyze(source);
+  const parsed = parse(source);
+  if (outputType === "parsed") return parsed;
+  const analyzed = analyze(parsed);
   if (outputType === "analyzed") return analyzed;
   // const optimized = optimize(analyzed);
   // if (outputType === "optimized") return optimized;

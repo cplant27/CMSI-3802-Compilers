@@ -1,10 +1,11 @@
-import assert from "node:assert/strict"
-import analyze from "../src/analyzer.js"
-import optimize from "../src/optimizer.js"
-import generate from "../src/generator.js"
+import assert from "node:assert/strict";
+import analyze from "../src/analyzer.js";
+import optimize from "../src/optimizer.js";
+import generate from "../src/generator.js";
+import parse from "../src/parser.js";
 
 function dedent(s) {
-  return `${s}`.replace(/(?<=\n)\s+/g, "").trim()
+  return `${s}`.replace(/(?<=\n)\s+/g, "").trim();
 }
 
 const fixtures = [
@@ -44,14 +45,14 @@ const fixtures = [
   //     console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
   //   `,
   // },
-]
+];
 
 describe("The code generator", () => {
   for (const fixture of fixtures) {
     it(`produces expected js output for the ${fixture.name} program`, () => {
-      const actual = generate(analyze(fixture.source))
+      const actual = generate(analyze(parse(fixture.source)));
       // const actual = generate(optimize(analyze(parse(fixture.source))))
-      assert.deepEqual(actual, fixture.expected)
-    })
+      assert.deepEqual(actual, fixture.expected);
+    });
   }
-})
+});
