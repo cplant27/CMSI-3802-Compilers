@@ -457,9 +457,8 @@ export default function analyze(sourceCode) {
   for (const [name, entity] of Object.entries(core.standardLibrary)) {
     context.localvars.set(name, entity)
   }
-  console.log(sourceCode)
   const match = toalGrammar.match(sourceCode) 
   if (!match.succeeded()) error(match.message) 
-  // console.log("Grammar Check Passed!") 
+  // console.log("Grammar Check Passed!")
   return analyzer(match).rep()
 }

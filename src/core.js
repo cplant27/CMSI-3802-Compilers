@@ -204,7 +204,6 @@ Program.prototype[util.inspect.custom] = function () {
       return util.inspect(e);
     }
     for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
-      // console.log(node.constructor)
       let type = node.constructor.name;
       let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`);
       yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`;

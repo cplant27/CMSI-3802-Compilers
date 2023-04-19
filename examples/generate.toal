@@ -1,0 +1,5 @@
+make x with 3 times 7;
+add 1 to x;
+subtract 1 from x;
+make y with true;
+print x;

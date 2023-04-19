@@ -65,6 +65,10 @@ export default function generate(program) {
     ChangeVariable(v) {
       output.push(`${v.term} = ${v.term} ${v.op} ${v.target}`)
     },
+    PrintStatement(s) {
+      const argument = gen(s.argument)
+      output.push(`console.log(${argument});`)
+    },
     Expression(e) {
       output.push(`${e.left} ${e.op} ${e.right}`)
     },
@@ -140,10 +144,13 @@ export default function generate(program) {
     StringLiteral(e) {
       return e.contents
     },
+    Array(a) {
+      return a.map(gen)
+    }
   }
 
-  let randomCalled = false
+  // let randomCalled = false
   gen(program)
-  if (randomCalled) output.push("function _r(a){return a[~~(Math.random()*a.length)]}")
+  // if (randomCalled) output.push("function _r(a){return a[~~(Math.random()*a.length)]}")
   return output.join("\n")
 }
