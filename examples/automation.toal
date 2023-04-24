@@ -1,5 +1,5 @@
-automate addNums( num , num2 ) {
-     output num plus num2;
+automate addNums( num: num1 , num: num2 ) -> num {
+     output num1 plus num2;
 }
 
 make x with 9;

@@ -4,6 +4,6 @@ if x is 5 {
     print "X IS 5";
 }
 
-if not {
+ifnot {
     print "X IS NOT 5";
 }

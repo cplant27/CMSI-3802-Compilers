@@ -360,13 +360,13 @@ export default function analyze(match) {
       checkNumeric(termRep.type, term); //grammar catches this before analyzer for non-vars
       switch (op.sourceString) {
         case "multiply":
-          return new core.ChangeVariable("*", targetRep, termRep);
+          return new core.ChangeVariable("*", termRep, targetRep);
         case "divide":
-          return new core.ChangeVariable("/", targetRep, termRep);
+          return new core.ChangeVariable("/", termRep, targetRep);
         case "raise":
-          return new core.ChangeVariable("^", targetRep, termRep);
+          return new core.ChangeVariable("^", termRep, targetRep);
         case "mod":
-          return new core.ChangeVariable("%", targetRep, termRep);
+          return new core.ChangeVariable("%", termRep, targetRep);
       }
     },
     Statement_prnt(_print, argument, _semicolon) {

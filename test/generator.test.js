@@ -26,6 +26,27 @@ const fixtures = [
       console.log(x_1);
     `,
   },
+  {
+    name: "if statement",
+    source: `
+      make x with 5;
+      if x is 5 { 
+        print "X IS 5";
+      }
+      ifnot {
+        print "X IS NOT 5";
+      }
+    `,
+    expected: dedent`
+      let x_1 = 5;
+      if (x === 5) {
+        console.log("X IS 5");
+      }
+      else {
+        console.log("X IS NOT 5");
+      }
+    `,
+  },
   // {
   //   name: "small",
   //   source: `

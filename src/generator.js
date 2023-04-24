@@ -9,7 +9,6 @@ export default function generate(program) {
   const output = [];
 
   const standardFunctions = new Map([
-    [standardLibrary.print, (x) => `console.log(${x})`],
     [standardLibrary.append, (x) => `${x}.append(${e})`],
     [standardLibrary.remove, (x) => `${x}.remove(${e})`],
     [standardLibrary.type, (x) => `typeof ${x}`],
@@ -31,6 +30,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
+    console.log("\n\nNODE:\n\n", node)
     return generators[node.constructor.name](node);
   }
 
@@ -56,20 +56,21 @@ export default function generate(program) {
       output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
     },
     Assignment(a) {
-      output.push(`${gen(a.target)} = ${gen(a.value)};`);
+      output.push(`${a.target} = ${gen(a.value)};`);
     },
     ChangeVariable(v) {
-      output.push(`${gen(v.target)} = ${gen(v.target)} ${v.op} ${v.term}`);
+      output.push(`${gen(v.target)} = ${gen(v.target)} ${v.op} ${gen(v.term)};`);
     },
     PrintStatement(s) {
       const argument = gen(s.argument);
       output.push(`console.log(${argument});`);
     },
     Expression(e) {
-      return `(${e.left} ${e.op} ${e.right})`;
+      // add lines for all gen() possibilities?
+      return `(${e.left} ${e.op} ${gen(e.right)})`;
     },
     ParenthasesExpression(e) {
-      output.push(`(${e.contents})`);
+      return `(${gen(e.contents)})`;
     },
     BooleanExpression(e) {
       output.push(`${e.left} ${e.op} ${e.right}`);
@@ -78,14 +79,15 @@ export default function generate(program) {
       return targetName(a);
     },
     AutomationDeclaration(d) {
-      output.push(`function ${gen(d.auto)}(${gen(d.params).join(", ")}) {`);
+      const paramNames = d.params.map(gen).join(", ")
+      output.push(`function ${gen(d.auto)}(${paramNames}}) {`);
       gen(d.body);
       output.push("}");
     },
     CallStatement(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
-        : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
+        : `${gen(c.callee)}(${c.args.join(", ")})`;
       // Calls in expressions vs in statements are handled differently
       if (c.callee.type.returnType !== Type.VOID) {
         return targetCode;
@@ -95,19 +97,20 @@ export default function generate(program) {
     CallExpression(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
-        : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
+        : `${gen(c.callee)}(${c.args.join(", ")})`;
       // Calls in expressions vs in statements are handled differently
       if (c.callee.type.returnType !== Type.VOID) {
         return targetCode;
       }
-      output.push(`${targetCode};`);
+      return `${targetCode}`;
     },
     Output(s) {
-      output.push(`return ${gen(s.expression)};`);
+      output.push(`return ${s.expression}`);
     },
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`);
-      gen(s.consequent);
+      // think this is causing an error in ifStmt.toal
+      gen(s.alternate);
       if (s.alternate) {
         output.push("} else");
         gen(s.alternate.body);

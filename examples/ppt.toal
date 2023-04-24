@@ -1,0 +1,21 @@
+
+# Simple variable declaration
+
+make x with 1;
+make y with "Make variables with ANY type!";
+make z with ["even", "a", "list"];
+constantly make C with "constants cannot be changed";
+
+# and even simpler incrementation
+
+add 1 to x;
+subtract 1 from x;
+multiply x by 1;
+divide x by 1;
+
+# Say goodbye to those confusing math symbols!
+
+change x to 5;
+make a with 2 plus x minus 7;
+make b with 2 to the 9 minus (10 divided by x) times x to the 0;
+# let b = (2 ^ (9 - ((10 / x) * (x ^ 0))));
