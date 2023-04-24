@@ -30,7 +30,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
-    console.log("\n\nNODE:\n\n", node)
+    console.log("\n\nNODE:\n\n", node);
     return generators[node.constructor.name](node);
   }
 
@@ -59,7 +59,9 @@ export default function generate(program) {
       output.push(`${a.target} = ${gen(a.value)};`);
     },
     ChangeVariable(v) {
-      output.push(`${gen(v.target)} = ${gen(v.target)} ${v.op} ${gen(v.term)};`);
+      output.push(
+        `${gen(v.target)} = ${gen(v.target)} ${v.op} ${gen(v.term)};`
+      );
     },
     PrintStatement(s) {
       const argument = gen(s.argument);
@@ -67,19 +69,19 @@ export default function generate(program) {
     },
     Expression(e) {
       // add lines for all gen() possibilities?
-      return `(${e.left} ${e.op} ${gen(e.right)})`;
+      return `(${gen(e.left)} ${e.op} ${gen(e.right)})`;
     },
-    ParenthasesExpression(e) {
+    ParenthesesExpression(e) {
       return `(${gen(e.contents)})`;
     },
     BooleanExpression(e) {
-      output.push(`${e.left} ${e.op} ${e.right}`);
+      return `${gen(e.left)} ${e.op === "==" ? "===" : e.op} ${gen(e.right)}`;
     },
     Automation(a) {
       return targetName(a);
     },
     AutomationDeclaration(d) {
-      const paramNames = d.params.map(gen).join(", ")
+      const paramNames = d.params.map(gen).join(", ");
       output.push(`function ${gen(d.auto)}(${paramNames}}) {`);
       gen(d.body);
       output.push("}");
@@ -109,14 +111,15 @@ export default function generate(program) {
     },
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`);
-      // think this is causing an error in ifStmt.toal
-      gen(s.alternate);
+      gen(s.body);
       if (s.alternate) {
-        output.push("} else");
-        gen(s.alternate.body);
-      } else {
-        output.push("}");
+        gen(s.alternate);
       }
+      output.push("}");
+    },
+    ElseStatement(s) {
+      output.push(`} else {`);
+      gen(s.body);
     },
     WhileLoop(s) {
       output.push(`while (${gen(s.test)}) {`);

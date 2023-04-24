@@ -20,8 +20,8 @@ const fixtures = [
     `,
     expected: dedent`
       let x_1 = (3 * 7);
-      x_1 = x_1 + 1
-      x_1 = x_1 - 1
+      x_1 = x_1 + 1;
+      x_1 = x_1 - 1;
       let y_2 = true_3;
       console.log(x_1);
     `,
@@ -39,10 +39,9 @@ const fixtures = [
     `,
     expected: dedent`
       let x_1 = 5;
-      if (x === 5) {
+      if (x_1 === 5) {
         console.log("X IS 5");
-      }
-      else {
+      } else {
         console.log("X IS NOT 5");
       }
     `,
