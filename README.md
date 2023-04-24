@@ -70,16 +70,16 @@ Whether you are a seasoned programmer or just starting out, this language is the
 
 | Traditional | T.O.A.L.    |
 | ----------- | ----------- |
-| break       | break       |
-| false       | false       |
 | true        | true        |
+| false       | false       |
+| print       | print       |
 | function    | automation  |
+| return      | output      |
 | if          | if          |
 | else        | ifnot       |
 | for         | loop over   |
 | while       | loop while  |
-| print       | print       |
-| return      | output      |
+| break       | break       |
 
 ## Examples
 
