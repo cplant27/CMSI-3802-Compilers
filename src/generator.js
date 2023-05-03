@@ -9,8 +9,9 @@ export default function generate(program) {
   const output = [];
 
   const standardFunctions = new Map([
-    [standardLibrary.append, (x) => `${x}.append(${e})`],
-    [standardLibrary.remove, (x) => `${x}.remove(${e})`],
+    [standardLibrary.append, ([e, x]) => `${x}.push(${e})`],
+    [standardLibrary.remove, ([e, x]) => `${x}.pop(${e})`],
+    [standardLibrary.length, (x) => `${x}.length`],
     [standardLibrary.type, (x) => `typeof ${x}`],
     [standardLibrary.bytes, (s) => `[...Buffer.from(${s}, "utf8")]`],
     [standardLibrary.codepoints, (s) => `[...(${s})].map(s=>s.codePointAt(0))`],
@@ -30,7 +31,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
-    console.log("\n\nNODE:\n\n", node);
+    console.log("NODE:", node.constructor);
     return generators[node.constructor.name](node);
   }
 
@@ -56,7 +57,7 @@ export default function generate(program) {
       output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
     },
     Assignment(a) {
-      output.push(`${a.target} = ${gen(a.value)};`);
+      output.push(`${gen(a.target)} = ${gen(a.value)};`);
     },
     ChangeVariable(v) {
       output.push(
@@ -69,13 +70,13 @@ export default function generate(program) {
     },
     Expression(e) {
       // add lines for all gen() possibilities?
-      return `(${gen(e.left)} ${e.op} ${gen(e.right)})`;
+      return `${gen(e.left)} ${e.op} ${gen(e.right)}`;
     },
     ParenthesesExpression(e) {
       return `(${gen(e.contents)})`;
     },
     BooleanExpression(e) {
-      return `${gen(e.left)} ${e.op === "==" ? "===" : e.op} ${gen(e.right)}`;
+      return `${gen(e.left)} ${e.op} ${gen(e.right)}`;
     },
     Automation(a) {
       return targetName(a);

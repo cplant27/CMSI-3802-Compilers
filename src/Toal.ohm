@@ -58,7 +58,6 @@ Toal {
              | "subtract"
 
   keyword    = make | change | constantly | print 
-             | append | remove
              | if | ifnot | true | false 
              | empty | automate | output 
              | loop| while | over | break 
@@ -80,9 +79,6 @@ Toal {
   change     = "change" ~idchar
   constantly = "constantly" ~idchar
   print      = "print" ~idchar
-
-  append     = "append" ~idchar
-  remove     = "remove" ~idchar
 
   if         = "if" ~idchar
   ifnot      = "ifnot" ~idchar

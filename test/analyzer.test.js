@@ -10,8 +10,12 @@ const semanticChecks = [
   ],
   ["print statements with 0", "print 0;"],
   [
-    "variables can be all basic types",
-    'make a with 1; make b with 1.1; make c with true; make d with "string";',
+    "variables can be all types",
+    'make a with 1; make b with true; make c with "string"; make d with [1,2,3];',
+  ],
+  [
+    "variables can be negative and decimals",
+    'make a with -1; make b with 1.1;'
   ],
   [
     "variables can be expressions",
@@ -187,7 +191,7 @@ const semanticErrors = [
   [
     "assigning an undeclared variable",
     "make x with 1; change x to y;",
-    /AssignError: 'y' is not defined./,
+    /ContextLookupError: Identifier 'y' not declared./,
   ],
 
   [
@@ -218,12 +222,12 @@ const semanticErrors = [
   ],
   [
     "too few arguments",
-    "automate x ( num: y, num: z ) -> num { output y plus z; } x(1);",
+    "automate x ( num: y, bool: z ) -> num { output y plus y; } x(1);",
     /CallError: 2 argument\(s\) required, but 1 passed./,
   ],
   [
     "too many arguments",
-    "automate x ( num: y, num: z ) -> num { output y plus z; } x(1,2,3);",
+    "automate x ( num: y, list: z ) -> num { output y plus y; } x(1,[2],3);",
     /CallError: 2 argument\(s\) required, but 3 passed./,
   ],
   [
@@ -245,7 +249,7 @@ const semanticErrors = [
   [
     "printing undeclared identifiers",
     "print x;",
-    /ContextLookupError: 'x' is not defined./,
+    /ContextLookupError: Identifier 'x' not declared./,
   ],
   [
     "checks types when incrementing variables",
@@ -256,6 +260,11 @@ const semanticErrors = [
     "non-boolean variable for if statement",
     "make x with 5; if x {}",
     /TypeError: Expected a true\/false value, got type 'number'./,
+  ],
+  [
+    "non returnable function with a return",
+    'automate noOut(num: num1) -> none { output num1; }',
+    /AutoError: Automation 'noOut' cannot output a value of type 'number' \(must output 'none'\)./
   ],
 ];
 
@@ -273,7 +282,7 @@ const expected = `   1 | Program statements=[#2,#5]
    3 | Variable name='x' readOnly=false type=#4
    4 | Type description='number'
    5 | IfStatement test=#6 body=[#8] alternate=[#11]
-   6 | BooleanExpression op='==' left=#3 right=5 type=#7
+   6 | BooleanExpression op='===' left=#3 right=5 type=#7
    7 | Type description='boolean'
    8 | PrintStatement argument=#9
    9 | StringLiteral contents='"X IS 5"' type=#10

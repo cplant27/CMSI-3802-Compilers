@@ -167,11 +167,11 @@ export class Type {
 }
 
 export const standardLibrary = Object.freeze({
-  append: new Automation("append", 2,Type.none),
-  remove: new Automation("remove", 2, Type.none),
-  length: new Automation("length", 1, Type.num),
-  range: new Automation("range", 2, Type.list),
-  type: new Automation("type", 1, Type.word),
+  append: new Automation("append", [new Variable("arg1", false, Type.any), new Variable("arg2", false, Type.any)], Type.none),
+  remove: new Automation("remove", [new Variable("arg1", false, Type.any), new Variable("arg2", false, Type.any)], Type.none),
+  length: new Automation("length", [new Variable("arg1", false, Type.any)], Type.num),
+  range: new Automation("range", [new Variable("arg1", false, Type.any), new Variable("arg2", false, Type.any)], Type.list),
+  type: new Automation("type", [new Variable("arg1", false, Type.any)], Type.word),
   π: new Variable("π", true, Type.num),
   inf: new Variable("inf", true, Type.num),
   true: new Variable("true", true, Type.bool),
@@ -180,6 +180,7 @@ export const standardLibrary = Object.freeze({
 
 Number.prototype.type = Type.num
 Boolean.prototype.type = Type.bool
+String.prototype.type = Type.word
 
 // Return a compact and pretty string representation of the node graph,
 // taking care of cycles. Written here from scratch because the built-in

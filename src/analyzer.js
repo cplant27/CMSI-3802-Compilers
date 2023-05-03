@@ -159,6 +159,10 @@ function checkTypesMatch(fromType, toType, id, node) {
   );
 }
 
+function checkHasBeenFound( entity, name, node) {
+  check(entity, `ContextLookupError: Identifier '${name}' has not been declared`, node)
+}
+
 function isVar(sourceString, context) {
   if (context.localvars.has(sourceString)) {
     return true;
@@ -323,7 +327,7 @@ export default function analyze(match) {
       checkNotReadOnly(assVar, identifier);
       checkTypesMatch(assVar.type, valueRep.type, id, value);
       context.localvars.set(id, assVar);
-      return new core.Assignment(identifier.rep(), valueRep);
+      return new core.Assignment(assVar, valueRep);
     },
     ChngVar1(op, term, _tofrom, target, _semicolon) {
       const targetRep = context.getRep(target);
@@ -370,7 +374,7 @@ export default function analyze(match) {
       }
     },
     Statement_prnt(_print, argument, _semicolon) {
-      const argRep = context.getRep(argument);
+      const argRep = argument.rep();
       if (!argRep?.type)
         error(
           `ContextLookupError: '${argument.sourceString}' is not defined.`,
@@ -537,7 +541,7 @@ export default function analyze(match) {
         case "is less than":
           return new core.BooleanExpression("<", leftRep, rightRep);
         case "is":
-          return new core.BooleanExpression("==", leftRep, rightRep);
+          return new core.BooleanExpression("===", leftRep, rightRep);
         case "is not":
           return new core.BooleanExpression("!=", leftRep, rightRep);
         case "is greater than or equal to":
@@ -545,6 +549,11 @@ export default function analyze(match) {
         case "is less than or equal to":
           return new core.BooleanExpression("<=", leftRep, rightRep);
       }
+    },
+    Var(id) {
+      const entity = context.lookup(id.sourceString)
+      checkHasBeenFound(entity, id.sourceString, { at: id })
+      return entity
     },
     true(_) {
       return true;
