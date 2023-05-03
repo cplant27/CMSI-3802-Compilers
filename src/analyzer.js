@@ -257,9 +257,9 @@ export default function analyze(match) {
     Program(body) {
       return new core.Program(body.rep());
     },
-    Var(identifier) {
-      return identifier.rep();
-    },
+    // Var(identifier) {
+    //   return identifier.rep();
+    // },
     Statement_vardec(
       constant,
       _make,
@@ -371,13 +371,15 @@ export default function analyze(match) {
       context = context.newChildContext({
         automation: identifier.sourceString,
       });
-      for (const p of paramsRep) {
+      for (let i = 0; i < paramsRep.length; i++) {
+        const p = paramsRep[i];
         check(
           p.type !== Type.none,
           `AutoError: Type of parameter '${p.name}' cannot be NONE.`,
           params
         );
-        context.add(p.name, new core.Variable(p.name, false, p.type), params);
+        paramsRep[i] = new core.Variable(p.name, false, p.type);
+        context.add(p.name, paramsRep[i], params);
       }
       const bodyRep = body.rep();
       if (auto.type === Type.none) {

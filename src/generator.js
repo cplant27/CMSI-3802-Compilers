@@ -26,12 +26,12 @@ export default function generate(program) {
       if (!mapping.has(entity)) {
         mapping.set(entity, mapping.size + 1);
       }
-      return `${entity.name ?? entity.description}_${mapping.get(entity)}`;
+      return `${entity.name}_${mapping.get(entity)}`;
     };
   })(new Map());
 
   function gen(node) {
-    console.log("NODE:", node);
+    // console.log("NODE:", node.constructor);
     return generators[node.constructor.name](node);
   }
 
@@ -83,7 +83,7 @@ export default function generate(program) {
     },
     AutomationDeclaration(d) {
       const paramNames = d.params.map(gen).join(", ");
-      output.push(`function ${gen(d.auto)}(${paramNames}}) {`);
+      output.push(`function ${gen(d.auto)}(${paramNames}) {`);
       gen(d.body);
       output.push("}");
     },
@@ -93,25 +93,24 @@ export default function generate(program) {
     CallStatement(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
-        : `${gen(c.callee)}(${c.args.join(", ")})`;
+        : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
       // Calls in expressions vs in statements are handled differently
-      if (c.callee.type.returnType !== Type.VOID) {
-        return targetCode;
-      }
+      // if (c.callee.type.returnType !== Type.none) {
+      //   return targetCode;
+      // }
       output.push(`${targetCode};`);
     },
     CallExpression(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
-        : `${gen(c.callee)}(${c.args.join(", ")})`;
-      // Calls in expressions vs in statements are handled differently
-      if (c.callee.type.returnType !== Type.VOID) {
-        return targetCode;
-      }
-      return `${targetCode}`;
+        : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
+      // if (c.callee.type.returnType !== Type.none) {
+      return targetCode;
+      // }
+      // return `${targetCode}`;
     },
     Output(s) {
-      output.push(`return ${gen(s.value)}`);
+      output.push(`return ${gen(s.value)};`);
     },
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`);

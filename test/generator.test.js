@@ -75,13 +75,13 @@ const fixtures = [
       addNums(x, 5);
     `,
     expected: dedent`
-      function addNums_1( num1, num2 ) {
-        return num1 + num2;
+      function addNums_3(num1_1, num2_2) {
+        return num1_1 + num2_2;
       }
-      let x = 9;
-      let y = 1;
-      x = addNums_1(x, 5);
-      addNums(x, 5);
+      let x_4 = 9;
+      let y_5 = 1;
+      x_4 = addNums_3(x_4, 5);
+      addNums_3(x_4, 5);
     `,
   },
   {
@@ -104,7 +104,7 @@ const fixtures = [
       }
     `,
   },
-    {
+  {
     name: "for",
     source: `
       make this_list with [1,"hello", [1,2,3], []];
