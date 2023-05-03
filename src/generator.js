@@ -31,7 +31,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
-    console.log("NODE:", node.constructor);
+    console.log("NODE:", node);
     return generators[node.constructor.name](node);
   }
 
@@ -87,6 +87,9 @@ export default function generate(program) {
       gen(d.body);
       output.push("}");
     },
+    Param(p) {
+      return targetName(p);
+    },
     CallStatement(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
@@ -108,7 +111,7 @@ export default function generate(program) {
       return `${targetCode}`;
     },
     Output(s) {
-      output.push(`return ${s.expression}`);
+      output.push(`return ${gen(s.value)}`);
     },
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`);

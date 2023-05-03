@@ -1,0 +1,7 @@
+      automate addNums( num: num1 , num: num2 ) -> num {
+          output num1 plus num2;
+      }
+      make x with 9;
+      make y with 1;
+      change x to addNums(x, 5);
+      addNums(x, 5);

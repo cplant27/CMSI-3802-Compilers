@@ -15,7 +15,7 @@ const semanticChecks = [
   ],
   [
     "variables can be negative and decimals",
-    'make a with -1; make b with 1.1;'
+    "make a with -1; make b with 1.1;",
   ],
   [
     "variables can be expressions",
@@ -125,12 +125,17 @@ const semanticErrors = [
   ["else statements with no if", "ifnot{}", /Expected not an idchar/],
   ["not closing brackets in a list", "make x with [1,2,3;", /Expected "]"/],
   ["not closing quotes in a string", 'make x with "hello;', /Expected "\\""/],
+  ["undeclared variable in print", "print x;", /ContextLookupError/],
   [
     "non-boolean condition for if statement",
     "if 5 {}",
     /Expected "is", "is not", "is less than", "is greater than", "is less than or equal to", "is greater than or equal to", "mod", "to the", "divided by", "times", "minus", or "plus"/,
   ],
-
+  [
+    "output in function that should not have an output",
+    "automate x(num: y) -> none { if 5 is 5 {output 1;} }",
+    /cannot output a value of type 'number'/,
+  ],
   [
     "assigning unidintified identifier",
     "change x to 1;",
@@ -263,8 +268,13 @@ const semanticErrors = [
   ],
   [
     "non returnable function with a return",
-    'automate noOut(num: num1) -> none { output num1; }',
-    /AutoError: Automation 'noOut' cannot output a value of type 'number' \(must output 'none'\)./
+    "automate noOut(num: num1) -> none { output num1; }",
+    /AutoError: Automation 'noOut' cannot output a value of type 'number' \(must output 'none'\)./,
+  ],
+  [
+    "returning nothing from a function that should",
+    "automate noOut(num: num1) -> num { output; }",
+    /Something should be returned here/,
   ],
 ];
 

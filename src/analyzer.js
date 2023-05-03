@@ -102,28 +102,6 @@ function checkHasOutput(bodyRep, node) {
   );
 }
 
-function checkHasNoOutput(bodyRep, node) {
-  let nested = false;
-  bodyRep.forEach((stmt) => {
-    if (stmt.body) {
-      if (!(stmt instanceof core.AutomationDeclaration)) {
-        checkHasOutput(stmt.body, node);
-      }
-    } else {
-      check(
-        !(stmt instanceof core.Output),
-        `AutoError: Automation '${node.sourceString}' has no output type, cannot contain an output.`,
-        node
-      );
-    }
-    check(
-      !nested,
-      `AutoError: Automation '${node.sourceString}' has no output type, cannot contain an output.`,
-      node
-    );
-  });
-}
-
 function checkAutoCallArgs(argsRep, auto, context, node) {
   check(
     auto.params.length === argsRep.length,
@@ -131,23 +109,13 @@ function checkAutoCallArgs(argsRep, auto, context, node) {
     node
   );
   auto.params.forEach((p, i) => {
-    if (context.isVarOrAuto(argsRep[i])) {
-      check(
-        context.lookup(argsRep[i]).type === p.type || p.type === Type.any,
-        `CallError: Argument '${argsRep[i]}' (${
-          context.lookup(argsRep[i]).type.description
-        }) must be of type: ${p.type.description}.`,
-        node
-      );
-    } else {
-      check(
-        argsRep[i].type === p.type || p.type === Type.any,
-        `CallError: Argument ${i + 1} (${
-          argsRep[i].type.description
-        }) must be of type: ${p.type.description}.`,
-        node
-      );
-    }
+    check(
+      argsRep[i].type === p.type || p.type === Type.any,
+      `CallError: Argument ${i + 1} (${
+        argsRep[i].type.description
+      }) must be of type: ${p.type.description}.`,
+      node
+    );
   });
 }
 
@@ -159,8 +127,12 @@ function checkTypesMatch(fromType, toType, id, node) {
   );
 }
 
-function checkHasBeenFound( entity, name, node) {
-  check(entity, `ContextLookupError: Identifier '${name}' has not been declared`, node)
+function checkHasBeenFound(entity, name, node) {
+  check(
+    entity,
+    `ContextLookupError: Identifier '${name}' has not been declared`,
+    node
+  );
 }
 
 function isVar(sourceString, context) {
@@ -375,11 +347,6 @@ export default function analyze(match) {
     },
     Statement_prnt(_print, argument, _semicolon) {
       const argRep = argument.rep();
-      if (!argRep?.type)
-        error(
-          `ContextLookupError: '${argument.sourceString}' is not defined.`,
-          argument
-        );
       return new core.PrintStatement(argRep);
     },
     Param(type, _colon, identifier) {
@@ -414,7 +381,6 @@ export default function analyze(match) {
       }
       const bodyRep = body.rep();
       if (auto.type === Type.none) {
-        checkHasNoOutput(bodyRep, identifier);
       } else {
         checkHasOutput(bodyRep, identifier);
       }
@@ -451,10 +417,11 @@ export default function analyze(match) {
     },
     Statement_output(_output, value, _semicolon) {
       let valueRep = context.getRep(value); // returns an array when value is not a variable
-      check(valueRep.length !== 0, `AutoError: Must output a value.`, _output);
-      if (Array.isArray(valueRep)) {
+      if (valueRep.length === 0) {
+        valueRep.type = Type.none;
+      } else if (Array.isArray(valueRep)) {
         valueRep = valueRep[0];
-      } //quick fix for above
+      }
       checkInAutomation(context, _output);
       const auto = context.lookup(context.automation);
       if (value.rep().length === 0) {
@@ -551,9 +518,9 @@ export default function analyze(match) {
       }
     },
     Var(id) {
-      const entity = context.lookup(id.sourceString)
-      checkHasBeenFound(entity, id.sourceString, { at: id })
-      return entity
+      const entity = context.lookup(id.sourceString);
+      checkHasBeenFound(entity, id.sourceString, { at: id });
+      return entity;
     },
     true(_) {
       return true;
