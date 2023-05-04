@@ -119,6 +119,7 @@ const semanticChecks = [
 ];
 
 const semanticErrors = [
+  ["assigning undeclared variable", "make x with 0; change x to y;", /ContextLookupError: Identifier 'y' not declared./],
   ["no semicolon", "make x with 0", /Expected ";"/],
   ["number as an identifier", "make 5 with 5;", /Expected not a numeral/],
   ["keyword as an identifier", "make if with 5;", /Expected not a keyword/],

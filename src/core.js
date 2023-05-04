@@ -139,7 +139,6 @@ export class StringLiteral {
 }
 
 export class Type {
-  // Type of all basic type int, float, string, etc. and superclass of others
   static bool = new Type("boolean");
   static num = new Type("number");
   static word = new Type("word");
@@ -151,7 +150,6 @@ export class Type {
   }
 
   static fromName(name) {
-    // make 1 number and boolean type
     switch (name) {
       case "bool":
         return Type.bool;
@@ -214,14 +212,9 @@ Number.prototype.type = Type.num;
 Boolean.prototype.type = Type.bool;
 String.prototype.type = Type.word;
 
-// Return a compact and pretty string representation of the node graph,
-// taking care of cycles. Written here from scratch because the built-in
-// inspect function, while nice, isn't nice enough. Defined properly in
-// the root class prototype so that it automatically runs on console.log.
 Program.prototype[util.inspect.custom] = function () {
   const tags = new Map();
 
-  // Attach a unique integer tag to every node
   function tag(node) {
     if (tags.has(node) || typeof node !== "object" || node === null) return;
     tags.set(node, tags.size + 1);

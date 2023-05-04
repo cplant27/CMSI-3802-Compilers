@@ -116,12 +116,12 @@ const fixtures = [
       }
     `,
     expected: dedent`
-      let this_list = [1, "hello", [1,2,3], []];
-      for (let element of this_list){
-        console.log(element);
+      let this_list_1 = [1, "hello", [1, 2, 3], []];
+      for (let element of this_list_1) {
+        console.log(element_2);
       }
-      for (let element of [1,2,3]){
-        console.log(element);
+      for (let element of [1, 2, 3]) {
+        console.log(element_3);
       }
     `,
   },
@@ -140,7 +140,7 @@ const fixtures = [
     expected: dedent`
     console.log(typeof Math.PI);
     console.log(typeof Infinity);
-    let a_list_1 = [1,2,3];
+    let a_list_1 = [1, 2, 3];
     a_list_1.push(4);
     a_list_1.pop(4);
     console.log(a_list_1.length);
@@ -148,22 +148,12 @@ const fixtures = [
     console.log(typeof false);
     `,
   },
-  // {
-  //   name: "name",
-  //   source: `
-
-  //   `,
-  //   expected: dedent`
-
-  //   `,
-  // },
 ];
 
 describe("The code generator", () => {
   for (const fixture of fixtures) {
     it(`produces expected js output for the ${fixture.name} program`, () => {
       const actual = generate(analyze(parse(fixture.source)));
-      // const actual = generate(optimize(analyze(parse(fixture.source))))
       assert.deepEqual(actual, fixture.expected);
     });
   }

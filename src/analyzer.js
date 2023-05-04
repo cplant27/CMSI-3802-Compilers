@@ -2,7 +2,6 @@ import * as core from "./core.js";
 
 const Type = core.Type;
 
-// Throw an error message that takes advantage of Ohm's messaging
 function error(message, node) {
   if (node) {
     throw new Error(`${node.source.getLineAndColumnMessage()}${message}`);
@@ -155,25 +154,6 @@ function isAuto(sourceString, context) {
   }
 }
 
-// function checkInteger(t, node) {
-//   checkType(t, [Type.INT, Type.EXP, Type.any], `an integer value, got type '${t.description}'`, node)
-// }
-
-// function checkHaveSameType(t1, t2, node) {
-//   check(t1.type.isEquivalentTo(t2.type), "Operands do not have the same type", node)
-// }
-
-// function checkIsAType(t, node) {
-//   check(t instanceof Type, "Type expected", node)
-// }
-
-// function checkAllHaveSameType(expressions) {
-//   check(
-//     expressions.slice(1).every(e => e.type.isEquivalentTo(expressions[0].type)),
-//     "Not all elements have the same type"
-//   )
-// }
-
 class Context {
   constructor({
     parent = null,
@@ -191,7 +171,6 @@ class Context {
     });
   }
   sees(name) {
-    // Search "outward" through enclosing scopes
     return (
       this.localvars.has(name) ||
       this.localautos.has(name) ||
@@ -199,9 +178,6 @@ class Context {
     );
   }
   add(name, entity, node) {
-    // No shadowing! Prevent addition if id anywhere in scope chain! This is
-    // a T.O.A.L thing. Many other languages allow shadowing, and in these,
-    // we would only have to check that name is not in this.locals
     if (entity instanceof core.Variable) {
       check(
         !this.sees(name),
@@ -257,9 +233,6 @@ export default function analyze(match) {
     Program(body) {
       return new core.Program(body.rep());
     },
-    // Var(identifier) {
-    //   return identifier.rep();
-    // },
     Statement_vardec(
       constant,
       _make,
@@ -288,8 +261,6 @@ export default function analyze(match) {
     Statement_varass(_change, identifier, _to, value, _semicolon) {
       const id = identifier.sourceString;
       const valueRep = context.getRep(value);
-      if (!valueRep?.type)
-        error(`AssignError: '${value.sourceString}' is not defined.`, value);
       const assVar = context.lookup(identifier.sourceString, identifier);
       check(
         assVar instanceof core.Variable,
@@ -311,9 +282,9 @@ export default function analyze(match) {
         target
       );
       const targetType = targetVariable.type;
-      checkNumeric(targetType, target); //in test.toal 'add 5 to 5' confusing error
+      checkNumeric(targetType, target);
       checkNotReadOnly(targetVariable, target);
-      checkNumeric(termRep.type, term); //grammar catches this before analyzer for non-vars
+      checkNumeric(termRep.type, term);
       switch (op.sourceString) {
         case "add":
           return new core.ChangeVariable("+", termRep, targetRep);
@@ -331,9 +302,9 @@ export default function analyze(match) {
         target
       );
       const targetType = targetVariable.type;
-      checkNumeric(targetType, target); //in test.toal 'add 5 to 5' confusing error
+      checkNumeric(targetType, target);
       checkNotReadOnly(targetVariable, target);
-      checkNumeric(termRep.type, term); //grammar catches this before analyzer for non-vars
+      checkNumeric(termRep.type, term);
       switch (op.sourceString) {
         case "multiply":
           return new core.ChangeVariable("*", termRep, targetRep);
@@ -365,8 +336,6 @@ export default function analyze(match) {
         output
       );
       const auto = new core.Automation(id, paramsRep, outputType);
-      // Add the automation to the context before analyzing the body, because
-      // we want to allow automations to be recursive
       context.add(id, auto);
       context = context.newChildContext({
         automation: identifier.sourceString,
@@ -418,7 +387,7 @@ export default function analyze(match) {
       return new core.CallExpression(auto, argsRep);
     },
     Statement_output(_output, value, _semicolon) {
-      let valueRep = context.getRep(value); // returns an array when value is not a variable
+      let valueRep = context.getRep(value);
       if (valueRep.length === 0) {
         valueRep.type = Type.none;
       } else if (Array.isArray(valueRep)) {
@@ -460,7 +429,6 @@ export default function analyze(match) {
     Statement_for(_loop, _over, tempVar, _in, list, body) {
       const tempRep = tempVar.rep();
       const listRep = context.getRep(list);
-      // FIX LISTS
       checkList(listRep.type, list);
       context = context.newChildContext({ inLoop: true });
       context.add(

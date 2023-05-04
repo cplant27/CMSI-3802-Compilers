@@ -1,8 +1,3 @@
-// CODE GENERATOR
-//
-// Invoke generate(program) with the program node to get back the JavaScript
-// translation as a string.
-
 import { Type, standardLibrary } from "./core.js";
 
 export default function generate(program) {
@@ -17,10 +12,6 @@ export default function generate(program) {
     [standardLibrary.codepoints, (s) => `[...(${s})].map(s=>s.codePointAt(0))`],
   ]);
 
-  // Variable and function names in JS will be suffixed with _1, _2, _3,
-  // etc. This is because "switch", for example, is a legal name in Carlos,
-  // but not in JS. So, the Carlos variable "switch" must become something
-  // like "switch_1". We handle this by mapping each name to its suffix.
   const targetName = ((mapping) => {
     return (entity) => {
       if (!mapping.has(entity)) {
@@ -31,18 +22,14 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
-    // console.log("NODE:", node.constructor);
     return generators[node.constructor.name](node);
   }
 
   const generators = {
-    // Key idea: when generating an expression, just return the JS string; when
-    // generating a statement, write lines of translated JS to the output array.
     Program(p) {
       gen(p.statements);
     },
     Variable(v) {
-      // Standard library constants just get special treatment
       if (v === standardLibrary.π) {
         return "Math.PI";
       }
@@ -52,8 +39,6 @@ export default function generate(program) {
       return targetName(v);
     },
     VariableDeclaration(d) {
-      // We don't care about const vs. let in the generated code! The analyzer has
-      // already checked that we never updated a const, so let is always fine.
       output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`);
     },
     Assignment(a) {
@@ -69,7 +54,6 @@ export default function generate(program) {
       output.push(`console.log(${argument});`);
     },
     Expression(e) {
-      // add lines for all gen() possibilities?
       return `${gen(e.left)} ${e.op} ${gen(e.right)}`;
     },
     ParenthesesExpression(e) {
@@ -87,27 +71,17 @@ export default function generate(program) {
       gen(d.body);
       output.push("}");
     },
-    Param(p) {
-      return targetName(p);
-    },
     CallStatement(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
         : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
-      // Calls in expressions vs in statements are handled differently
-      // if (c.callee.type.returnType !== Type.none) {
-      //   return targetCode;
-      // }
       output.push(`${targetCode};`);
     },
     CallExpression(c) {
       const targetCode = standardFunctions.has(c.callee)
         ? standardFunctions.get(c.callee)(gen(c.args))
         : `${gen(c.callee)}(${gen(c.args).join(", ")})`;
-      // if (c.callee.type.returnType !== Type.none) {
       return targetCode;
-      // }
-      // return `${targetCode}`;
     },
     Output(s) {
       output.push(`return ${gen(s.value)};`);
@@ -138,13 +112,16 @@ export default function generate(program) {
       output.push("break;");
     },
     List(e) {
-      return `[${gen(e.elements).join(",")}]`;
+      return `[${gen(e.elements).join(", ")}]`;
     },
     Number(e) {
       return e;
     },
     Boolean(e) {
       return e;
+    },
+    String(s) {
+      return s;
     },
     StringLiteral(e) {
       return e.contents;
@@ -154,8 +131,6 @@ export default function generate(program) {
     },
   };
 
-  // let randomCalled = false
   gen(program);
-  // if (randomCalled) output.push("function _r(a){return a[~~(Math.random()*a.length)]}")
   return output.join("\n");
 }
